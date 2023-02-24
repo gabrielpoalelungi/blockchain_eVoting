@@ -1,0 +1,13 @@
+services:
+
+  postgres:
+    image: postgres:13.4-alpine
+    container_name: postgres
+    restart: always
+    ports:
+      - 10432:5432
+    environment:
+      POSTGRES_PASSWORD: resu
+      POSTGRES_USER: user
+    volumes:
+      - ./init_psql.sql:/docker-entrypoint-initdb.d/init_psql.sql
