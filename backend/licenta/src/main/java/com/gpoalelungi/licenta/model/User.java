@@ -45,8 +45,8 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "identity_card", nullable = false)
-    @Convert(converter = IdentityCardJsonConverter.class)
+    @JoinColumn(name = "identity_card_id", referencedColumnName = "identity_card_id")
+    @OneToOne(cascade = CascadeType.ALL)
     private IdentityCard identityCard;
 
     @JoinColumn(name = "voter_id", referencedColumnName = "voter_id")
