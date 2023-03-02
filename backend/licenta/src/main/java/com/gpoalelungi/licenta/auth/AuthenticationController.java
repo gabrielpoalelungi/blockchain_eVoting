@@ -25,7 +25,7 @@ public class AuthenticationController {
         try {
             return ResponseEntity.ok(authenticationService.register(request));
         } catch (UserAlreadyExistsException exc) {
-            AuthenticationResponse response = new AuthenticationResponse(exc.getMessage());
+            AuthenticationResponse response = new AuthenticationResponse(null, exc.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }

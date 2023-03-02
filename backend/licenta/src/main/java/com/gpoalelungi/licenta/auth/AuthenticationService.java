@@ -57,8 +57,12 @@ public class AuthenticationService {
                 .identityCard(identityCard)
                 .build();
 
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("User already registered with this email!");
+        }
+
         if (identityCardRepository.findByCNPAndIdCardNumber(identityCard.getCNP(), identityCard.getIdCardNumber()).isPresent()) {
-            throw new UserAlreadyExistsException("User already registered! ID number: " + user.getIdentityCard().getIdCardNumber());
+            throw new UserAlreadyExistsException("User already registered with this ID Card!");
         }
 
         identityCardRepository.save(identityCard);
@@ -69,6 +73,7 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .message("Successful register!")
                 .build();
     }
 
@@ -80,6 +85,7 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .message("Successful login!")
                 .build();
     }
 }
