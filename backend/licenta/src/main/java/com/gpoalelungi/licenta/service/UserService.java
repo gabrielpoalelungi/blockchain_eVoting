@@ -24,9 +24,7 @@ public class UserService {
 
     public boolean registerUserHasVoted() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = ((User) auth.getPrincipal()).getEmail();
-        User user = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new UserNotFoundException("User with this email was not found"));
+        User user = (User) auth.getPrincipal();
 
         if (user.getVoter().getHasVoted() == Boolean.FALSE) {
             user.getVoter().setHasVoted(Boolean.TRUE);
@@ -38,9 +36,7 @@ public class UserService {
 
     public UserDetailsResponse getUserDetails() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = ((User) auth.getPrincipal()).getEmail();
-        User user = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new UserNotFoundException("User with this email was not found"));
+        User user = (User) auth.getPrincipal();
 
         return UserDetailsResponse.builder()
             .userEmail(user.getEmail())

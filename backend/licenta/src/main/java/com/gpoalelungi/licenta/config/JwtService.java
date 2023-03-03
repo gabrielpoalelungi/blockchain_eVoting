@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    public static final int ONE_DAY_IN_MILLIS = 1000 * 60 * 24;
+    public static final int FIFTEEN_MINUTES_IN_MILLIS = 1000 * 60 * 25;
     // TODO: Move it to application properties and env var
     private static final String SECRET_KEY = "50645367566B5970337336763979244226452948404D6351655468576D5A7134";
 
@@ -39,7 +39,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + ONE_DAY_IN_MILLIS))
+                .setExpiration(new Date(System.currentTimeMillis() + FIFTEEN_MINUTES_IN_MILLIS))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
