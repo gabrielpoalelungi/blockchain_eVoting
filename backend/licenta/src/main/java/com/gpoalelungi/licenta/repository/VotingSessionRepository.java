@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VotingSessionRepository extends JpaRepository<VotingSession, Long> {
-  @Query(value = "SELECT nextval('voting_session_id_seq')", nativeQuery = true)
-  Long getNextVal();
+  @Query(value = "SELECT last_value FROM voting_session_id_seq", nativeQuery = true)
+  Long getCurrentVal();
 }

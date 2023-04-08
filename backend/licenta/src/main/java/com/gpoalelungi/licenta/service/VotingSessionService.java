@@ -1,5 +1,6 @@
 package com.gpoalelungi.licenta.service;
 
+import com.gpoalelungi.licenta.exceptions.VotingSessionNotFinishedException;
 import com.gpoalelungi.licenta.exceptions.VotingSessionNotFoundException;
 import com.gpoalelungi.licenta.model.VotingSession;
 import com.gpoalelungi.licenta.model.VotingSessionStatus;
@@ -33,7 +34,7 @@ public class VotingSessionService {
 
     PrivateKey privateKey = keyPair.getPrivate();
     byte[] privateKeyBytes = privateKey.getEncoded();
-    FileOutputStream fos = new FileOutputStream(String.format("privateKey-session%d.txt", votingSessionRepository.getNextVal()));
+    FileOutputStream fos = new FileOutputStream(String.format("privateKey-session%d.txt", votingSessionRepository.getCurrentVal() + 1));
     fos.write(privateKeyBytes);
     fos.close();
 
@@ -48,10 +49,20 @@ public class VotingSessionService {
   public void releaseVotingSessionPrivateKey(Long votingSessionId) throws IOException {
     VotingSession votingSession = votingSessionRepository.findById(votingSessionId)
         .orElseThrow(() -> new VotingSessionNotFoundException("Voting session not found with id: " + votingSessionId));
+    if (votingSession.getVotingSessionStatus() != VotingSessionStatus.FINISHED) {
+      throw new VotingSessionNotFinishedException("Voting session with id=" + votingSessionId + " NOT FINISHED YET");
+    }
 
     byte[] privateKeyBytes = readPrivateKey(votingSessionId);
 
     votingSession.setReleasePrivateKey(Base64.getEncoder().encodeToString(privateKeyBytes));
+    votingSessionRepository.save(votingSession);
+  }
+
+  public void updateVotingSessionStatus(Long votingSessionId, VotingSessionStatus votingSessionStatus) {
+    VotingSession votingSession = votingSessionRepository.findById(votingSessionId)
+        .orElseThrow(() -> new VotingSessionNotFoundException("Voting session not found with id=" + votingSessionId));
+    votingSession.setVotingSessionStatus(votingSessionStatus);
     votingSessionRepository.save(votingSession);
   }
 

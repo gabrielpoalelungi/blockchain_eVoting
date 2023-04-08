@@ -12,6 +12,7 @@ import com.gpoalelungi.licenta.model.User;
 import com.gpoalelungi.licenta.model.Voter;
 import com.gpoalelungi.licenta.repository.UserRepository;
 import com.gpoalelungi.licenta.repository.VoterRepository;
+import com.gpoalelungi.licenta.service.IdentityCardService;
 import com.gpoalelungi.licenta.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,8 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final IdentityCardJsonConverter identityCardJsonConverter;
 
+    private final IdentityCardService identityCardService;
+
     public AuthenticationResponse register(RegisterRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -55,7 +58,7 @@ public class AuthenticationService {
             throw new UserAlreadyExistsException("User already registered with this phone number!");
         }
 
-        if(!userService.validateIdentityCard(request.getIdentityCard())) {
+        if(!identityCardService.validateIdentityCard(request.getIdentityCard())) {
             log.error("Invalid identity card!");
             throw new InvalidIdentityCardException("Invalid identity card!");
         }
