@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  blockchain-voting-db:
+    image: postgres:13.2-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_DB: blockchain-voting-db
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - blockchain-voting-db:/var/lib/postgresql/data
+
+volumes:
+  blockchain-voting-db:
