@@ -10,6 +10,7 @@ import com.gpoalelungi.licenta.service.VotingSessionService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ public class VotingSessionController {
   private final ObjectMapper objectMapper;
 
   @PostMapping("create")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<?> createVotingSession() {
     try {
       VotingSession votingSession = votingSessionService.createVotingSession();
@@ -39,6 +41,7 @@ public class VotingSessionController {
   }
 
   @PostMapping("{id}/release-private-key")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<?> releaseVotingSessionPrivateKey(@PathVariable("id") Long votingSessionId) {
     try {
       votingSessionService.releaseVotingSessionPrivateKey(votingSessionId);
@@ -49,6 +52,7 @@ public class VotingSessionController {
   }
 
   @PutMapping("{id}/update-status")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<?> updateStatusVotingSession(@PathVariable("id") Long votingSessionId, @QueryParam("status") VotingSessionStatus newStatus) {
     try {
       votingSessionService.updateVotingSessionStatus(votingSessionId, newStatus);

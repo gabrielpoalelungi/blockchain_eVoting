@@ -7,8 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -50,32 +51,28 @@ public class IdentityCardService {
         int year = cnp[1] * 10 + cnp[2];
         int month = cnp[3] * 10 + cnp[4];
         int day = cnp[5] * 10 + cnp[6];
-        if (month > 12) {
-          month -= 50;
-          year += 2000;
-        } else {
+        if (month > 12 || day > 31 || month == 0 || day == 0) {
+          return false;
+        }
+        // For february
+        if (month == 2 && day > 29) {
+          return false;
+        }
+        // For february in leap years
+        if (month == 2 && day == 29 && year % 4 != 0) {
+          return false;
+        }
+        if (cnp[0] != 5 && cnp[0] != 6) {
           year += 1900;
-        }
-        if (month == 2) {
-          if (year % 4 == 0) {
-                if (day > 29) {
-                  return false;
-                }
-          } else {
-                if (day > 28) {
-                  return false;
-                }
-          }
-        } else if (month == 4 || month == 6 || month == 9 || month == 11) {
-          if (day > 30) {
-                return false;
-          }
         } else {
-          if (day > 31) {
-                return false;
-          }
+          year += 2000;
         }
-        return true;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, day); // Note that the month is 0-based, so subtract 1
+
+        Date date = calendar.getTime();
+        return (date.getYear() + 18) < Date.from(Instant.now()).getYear();
   }
 
   private boolean validateExpirationDateFromIdentityCard(IdentityCard identityCard) {

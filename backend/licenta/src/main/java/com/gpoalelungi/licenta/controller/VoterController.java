@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class VoterController {
   private final VoterService voterService;
-  private final ModelMapper modelMapper;
 
   @GetMapping("logged-user")
   public ResponseEntity<VoterResponse> getVoterDetailsOfLoggedUser() {

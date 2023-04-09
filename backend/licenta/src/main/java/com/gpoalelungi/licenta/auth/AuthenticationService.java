@@ -37,13 +37,10 @@ import java.util.Map;
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final VoterRepository voterRepository;
-    private final UserService userService;
-
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final IdentityCardJsonConverter identityCardJsonConverter;
-
     private final IdentityCardService identityCardService;
 
     public AuthenticationResponse register(RegisterRequest request) {
@@ -72,6 +69,7 @@ public class AuthenticationService {
                 throw new UserAlreadyExistsException("User already registered with this identity card!");
             }
         }
+
         User newUser = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
