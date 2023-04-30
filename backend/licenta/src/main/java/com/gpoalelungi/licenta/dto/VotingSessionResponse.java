@@ -27,5 +27,7 @@ public class VotingSessionResponse {
   private String releasePrivateKey;
   private Date createdAt;
   private Date updatedAt;
+  private Date startingAt;
+  private Date endingAt;
   private VotingSessionStatus votingSessionStatus;
 }

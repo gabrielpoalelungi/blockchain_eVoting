@@ -2,16 +2,15 @@ package com.gpoalelungi.licenta.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,24 +22,28 @@ import jakarta.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
-@Table(name = "voting_session")
+@Table(name = "candidate")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
-public class VotingSession {
+public class Candidate {
 
   @Id
   @Column(name = "id", nullable = false)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "voting_session_id_seq")
-  @SequenceGenerator(name = "voting_session_id_seq", sequenceName = "voting_session_id_seq", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "candidate_id_seq")
+  @SequenceGenerator(name = "candidate_id_seq", sequenceName = "candidate_id_seq", allocationSize = 1)
   private Long id;
 
-  @Column(name = "voting_session_public_key", nullable = false, unique = true)
-  private String votingSessionPublicKey;
+  @Column(name = "official_name", nullable = false, unique = true)
+  private String officialName;
 
-  @Column(name = "released_private_key", unique = true)
-  private String releasePrivateKey;
+  @Column(name = "description", nullable = false)
+  private String description;
+
+  @Column(name = "photo_url", nullable = false)
+  private String photoUrl;
 
   @Column(name = "created_at", nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
@@ -51,16 +54,4 @@ public class VotingSession {
   @Temporal(TemporalType.TIMESTAMP)
   @UpdateTimestamp
   private Date updatedAt;
-
-  @Column(name = "starting_at", nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date startingAt;
-
-  @Column(name = "ending_at", nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date endingAt;
-
-  @Column(name = "status", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private VotingSessionStatus votingSessionStatus;
 }

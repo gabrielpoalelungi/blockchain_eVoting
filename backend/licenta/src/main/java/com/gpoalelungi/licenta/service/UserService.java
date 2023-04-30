@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
   private final UserRepository userRepository;
 
+  private final IdentityCardService identityCardService;
+
   public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
   }
@@ -33,10 +35,8 @@ public class UserService {
     return user;
   }
 
-
-
-  //TODO: implement this method
   public boolean validateIdentityCard(IdentityCard identityCard) {
-    return true;
+    // TODO: Do more here
+    return identityCardService.validateIdentityCard(identityCard);
   }
 }

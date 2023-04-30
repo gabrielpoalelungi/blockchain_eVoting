@@ -41,7 +41,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final IdentityCardJsonConverter identityCardJsonConverter;
-    private final IdentityCardService identityCardService;
+    private final UserService userService;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -55,7 +55,7 @@ public class AuthenticationService {
             throw new UserAlreadyExistsException("User already registered with this phone number!");
         }
 
-        if(!identityCardService.validateIdentityCard(request.getIdentityCard())) {
+        if(!userService.validateIdentityCard(request.getIdentityCard())) {
             log.error("Invalid identity card!");
             throw new InvalidIdentityCardException("Invalid identity card!");
         }

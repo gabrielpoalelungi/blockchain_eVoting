@@ -20,6 +20,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.Base64;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -27,7 +28,7 @@ import java.util.Base64;
 public class VotingSessionService {
   private final VotingSessionRepository votingSessionRepository;
 
-  public VotingSession createVotingSession() throws NoSuchAlgorithmException, IOException {
+  public VotingSession createVotingSession(Date startingAt, Date endingAt) throws NoSuchAlgorithmException, IOException {
     KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
     keyPairGenerator.initialize(2048);
     KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -41,6 +42,8 @@ public class VotingSessionService {
     VotingSession votingSessionToBeSaved = VotingSession.builder()
         .votingSessionPublicKey(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()))
         .votingSessionStatus(VotingSessionStatus.NOT_STARTED)
+        .startingAt(startingAt)
+        .endingAt(endingAt)
         .build();
 
     return votingSessionRepository.save(votingSessionToBeSaved);
@@ -64,6 +67,19 @@ public class VotingSessionService {
         .orElseThrow(() -> new VotingSessionNotFoundException("Voting session not found with id=" + votingSessionId));
     votingSession.setVotingSessionStatus(votingSessionStatus);
     votingSessionRepository.save(votingSession);
+  }
+
+  public VotingSession editVotingSessionStartingEndingAt(Long votingSessionId, Date newStartingAt, Date newEndingAt) {
+    VotingSession votingSession = votingSessionRepository.findById(votingSessionId)
+        .orElseThrow(() -> new VotingSessionNotFoundException("Voting session not found with id=" + votingSessionId));
+    votingSession.setStartingAt(newStartingAt);
+    votingSession.setEndingAt(newEndingAt);
+    return votingSessionRepository.save(votingSession);
+  }
+
+  public VotingSession getVotingSession() {
+    return votingSessionRepository.findFirstByVotingSessionPublicKeyNotNull()
+            .orElseThrow(() -> new VotingSessionNotFoundException("No voting session found"));
   }
 
   private byte[] readPrivateKey(Long votingSessionId) throws IOException {
