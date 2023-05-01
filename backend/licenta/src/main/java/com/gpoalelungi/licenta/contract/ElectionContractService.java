@@ -1,6 +1,8 @@
 package com.gpoalelungi.licenta.contract;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.TypeReference;
@@ -22,14 +24,16 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class ElectionContractService {
 
   private final Web3j web3j = Web3j.build(new HttpService("http://localhost:7545"));
-  private static final String CONTRACT_ADDRESS = "0x6Daa7D69947eC2A51c4eE90483AE2c0f0Ac9283F";
+  private static final String CONTRACT_ADDRESS = "0xe542DBC9c3F5cF7B4f1368C6451D4DFA52503cC3";
   private static final String ADMIN_ADDRESS = "0x17987d50dD4439Ed4Cf3975Ef6752D1C7a076cA3"; // replace with your actual admin address
   private static final BigInteger GAS_LIMIT = BigInteger.valueOf(3000000);
   private static final BigInteger GAS_PRICE = BigInteger.valueOf(1000000000); // 1 Gwei
@@ -42,27 +46,11 @@ public class ElectionContractService {
     return Election.load(CONTRACT_ADDRESS, web3j, txManager, contractGasProvider);
   }
 
-  public BigInteger getVoteCount() throws Exception {
-    final Function function = new Function(
-        "getAllVotes",
-        Collections.emptyList(),
-        Arrays.asList(new TypeReference<Uint256>() {}));
-
-    String encodedFunction = FunctionEncoder.encode(function);
-
-    Transaction transaction = Transaction.createEthCallTransaction(
-        null, CONTRACT_ADDRESS, encodedFunction);
-
-    EthCall response = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST)
-        .sendAsync().get();
-
-    if (response.hasError()) {
-      throw new Exception("Error getting vote count: " + response.getError().getMessage());
-    }
-
-    String result = response.getValue();
-    return new BigInteger(result.substring(2), 16);
-  }
+  //TODO: implement this
+//  public List<Map> getVoteCount() throws Exception {
+//
+//
+//  }
 
   public String endVote() throws Exception {
     Transaction transaction = Transaction.createFunctionCallTransaction(
@@ -119,4 +107,37 @@ public class ElectionContractService {
     String value = response.getValue();
     return ((Bool) election.isVoteFinished().decodeFunctionResponse(value).get(0)).getValue();
   }
+
+  public List getAllVotes() throws Exception {
+    Transaction transaction = Transaction.createFunctionCallTransaction(
+        ADMIN_ADDRESS, null, GAS_PRICE, GAS_LIMIT, CONTRACT_ADDRESS,
+        election.getAllVotes().encodeFunctionCall());
+
+    EthCall response = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
+
+    if (response.hasError()) {
+      throw new Exception("Error getting all votes: " + response.getError().getMessage());
+    }
+
+    return (List) election.getAllVotes().decodeFunctionResponse(response.getValue()).get(0).getValue();
+  }
+  public Boolean addVoter(String publicKey) throws Exception {
+    Transaction transaction = Transaction.createFunctionCallTransaction(
+        ADMIN_ADDRESS, null, GAS_PRICE, GAS_LIMIT, CONTRACT_ADDRESS,
+        election.addVoter(publicKey).encodeFunctionCall());
+
+    String transactionHash = web3j.ethSendTransaction(transaction).send().getTransactionHash();
+
+    // Wait for transaction to be mined
+    Optional<TransactionReceipt> receiptOptional;
+    do {
+      TimeUnit.SECONDS.sleep(2);
+      receiptOptional = web3j.ethGetTransactionReceipt(transactionHash).send().getTransactionReceipt();
+    } while (!receiptOptional.isPresent());
+
+    List<Election.VoterAddedEventResponse> events = Election.getVoterAddedEvents(receiptOptional.get());
+    log.info("VoterAddedEventResponse: {}, {}, {}", events.get(0).isRegistered, events.get(0).hasVoted, events.get(0).hashedPublicKey);
+    return events.get(0).isRegistered;
+  }
+
 }

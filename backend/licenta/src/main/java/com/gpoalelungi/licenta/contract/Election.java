@@ -309,6 +309,13 @@ public class Election extends Contract {
             this.encryptedVote = encryptedVote.getValue();
             this.signature = signature.getValue();
         }
+
+        public String toString() {
+            return "Vote [" +
+                "publicKey=" + publicKey + ", " +
+                "encryptedVote=" + encryptedVote + ", " +
+                "signature=" + signature + "]";
+        }
     }
 
     public static class VoteCastedEventResponse extends BaseEventResponse {

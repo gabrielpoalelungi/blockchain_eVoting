@@ -88,4 +88,14 @@ public class VotingSessionController {
       return ResponseEntity.notFound().build();
     }
   }
+
+  @PostMapping("add-all-voters")
+  public ResponseEntity<?> addAllVoters() {
+    try {
+      votingSessionService.addAllVotersToContract();
+      return ResponseEntity.ok().build();
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
 }

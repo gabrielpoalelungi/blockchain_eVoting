@@ -1,12 +1,18 @@
 package com.gpoalelungi.licenta.controller;
 
 import com.gpoalelungi.licenta.contract.ElectionContractService;
+import com.gpoalelungi.licenta.model.Voter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigInteger;
+import java.util.List;
 
 
 @RestController
@@ -34,4 +40,8 @@ public class ElectionContractController {
   public ResponseEntity<String> doEndVote() throws Exception {
     return ResponseEntity.ok(electionContractService.endVote().toString());
   }
+
+//  @PostMapping("/addAllVoters")
+//  public ResponseEntity<?> addAllRegisteredVotersToContract() throws Exception {
+//  }
 }

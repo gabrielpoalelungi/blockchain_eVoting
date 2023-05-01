@@ -1,7 +1,9 @@
 package com.gpoalelungi.licenta.service;
 
+import com.gpoalelungi.licenta.contract.ElectionContractService;
 import com.gpoalelungi.licenta.exceptions.VotingSessionNotFinishedException;
 import com.gpoalelungi.licenta.exceptions.VotingSessionNotFoundException;
+import com.gpoalelungi.licenta.model.Voter;
 import com.gpoalelungi.licenta.model.VotingSession;
 import com.gpoalelungi.licenta.model.VotingSessionStatus;
 import com.gpoalelungi.licenta.repository.VotingSessionRepository;
@@ -19,14 +21,18 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class VotingSessionService {
   private final VotingSessionRepository votingSessionRepository;
+  private final VoterService voterService;
+  private final ElectionContractService electionContractService;
 
   public VotingSession createVotingSession(Date startingAt, Date endingAt) throws NoSuchAlgorithmException, IOException {
     KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -82,8 +88,22 @@ public class VotingSessionService {
             .orElseThrow(() -> new VotingSessionNotFoundException("No voting session found"));
   }
 
+  public List<Voter> addAllVotersToContract() throws Exception {
+    List<Voter> voters = voterService.getAllVoters();
+    List<Voter> unregisteredVoters = new ArrayList<>();
+    for (Voter voter: voters) {
+      Boolean isRegistered = electionContractService.addVoter(voter.getPublicKey());
+      if (!isRegistered) {
+        log.error("Voter with id={} was not registered", voter.getId());
+        unregisteredVoters.add(voter);
+      }
+    }
+    return unregisteredVoters;
+  }
+
   private byte[] readPrivateKey(Long votingSessionId) throws IOException {
     FileInputStream fis = new FileInputStream(String.format("privateKey-session%d.txt", votingSessionId));
     return fis.readAllBytes();
   }
+
 }
