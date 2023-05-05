@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface VoterRepository extends JpaRepository<Voter, Long> {
 
   Optional<Voter> findByUser_Id(Long userId);
+
+  Optional<Voter> findByPublicKey(String publicKey);
 }

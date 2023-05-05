@@ -22,7 +22,7 @@ public class UserController {
   private final UserService userService;
 
   @GetMapping("{id}")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<UserResponse> getUserId(@PathVariable("id") Long userId) {
     try {
       User foundUser = userService.getUserById(userId);

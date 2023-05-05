@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS voter (
       private_key            TEXT NOT NULL,
       created_at             TIMESTAMP NOT NULL,
       user_id                BIGINT NOT NULL,
+      is_registered          BOOLEAN NOT NULL DEFAULT FALSE,
       CONSTRAINT user_table_id_fk
           FOREIGN KEY(user_id)
               REFERENCES user_table(id)

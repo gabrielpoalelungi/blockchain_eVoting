@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class ElectionContractService {
 
   private final Web3j web3j = Web3j.build(new HttpService("http://localhost:7545"));
-  private static final String CONTRACT_ADDRESS = "0xe542DBC9c3F5cF7B4f1368C6451D4DFA52503cC3";
+  private static final String CONTRACT_ADDRESS = "0x5315494855613c4a8b4872689DAF326af83830bE";
   private static final String ADMIN_ADDRESS = "0x17987d50dD4439Ed4Cf3975Ef6752D1C7a076cA3"; // replace with your actual admin address
   private static final BigInteger GAS_LIMIT = BigInteger.valueOf(3000000);
   private static final BigInteger GAS_PRICE = BigInteger.valueOf(1000000000); // 1 Gwei
@@ -46,16 +46,16 @@ public class ElectionContractService {
     return Election.load(CONTRACT_ADDRESS, web3j, txManager, contractGasProvider);
   }
 
-  //TODO: implement this
-//  public List<Map> getVoteCount() throws Exception {
-//
-//
-//  }
-
   public String endVote() throws Exception {
     Transaction transaction = Transaction.createFunctionCallTransaction(
         ADMIN_ADDRESS, null, GAS_PRICE, GAS_LIMIT, CONTRACT_ADDRESS,
         election.endVote().encodeFunctionCall());
+
+    EthCall response = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
+
+    if (response.hasError()) {
+      throw new Exception("Error ending vote: " + response.getError().getMessage());
+    }
 
     String transactionHash = web3j.ethSendTransaction(transaction).send().getTransactionHash();
 
@@ -74,6 +74,12 @@ public class ElectionContractService {
     Transaction transaction = Transaction.createFunctionCallTransaction(
         ADMIN_ADDRESS, null, GAS_PRICE, GAS_LIMIT, CONTRACT_ADDRESS,
         election.startVote().encodeFunctionCall());
+
+    EthCall response = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
+
+    if (response.hasError()) {
+      throw new Exception("Error starting vote: " + response.getError().getMessage());
+    }
 
     String transactionHash = web3j.ethSendTransaction(transaction).send().getTransactionHash();
 
@@ -126,8 +132,13 @@ public class ElectionContractService {
         ADMIN_ADDRESS, null, GAS_PRICE, GAS_LIMIT, CONTRACT_ADDRESS,
         election.addVoter(publicKey).encodeFunctionCall());
 
-    String transactionHash = web3j.ethSendTransaction(transaction).send().getTransactionHash();
+    EthCall response = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
 
+    if (response.hasError()) {
+      throw new Exception("Error adding voter: " + response.getError().getMessage());
+    }
+
+    String transactionHash = web3j.ethSendTransaction(transaction).send().getTransactionHash();
     // Wait for transaction to be mined
     Optional<TransactionReceipt> receiptOptional;
     do {

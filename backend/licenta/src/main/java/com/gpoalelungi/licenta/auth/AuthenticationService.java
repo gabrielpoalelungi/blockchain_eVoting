@@ -84,6 +84,7 @@ public class AuthenticationService {
                     .user(newUser)
                     .publicKey(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()))
                     .privateKey(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()))
+                    .isRegistered(false)
                     .build();
 
             userRepository.save(newUser);
@@ -96,7 +97,9 @@ public class AuthenticationService {
             e.printStackTrace();
         }
 
-        String jwtToken = jwtService.generateToken(newUser);
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("role", newUser.getRole());
+        String jwtToken = jwtService.generateToken(extraClaims, newUser);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .message("Successful register!")

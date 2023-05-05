@@ -56,4 +56,7 @@ public class Voter {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   @JsonIgnore
   private User user;
+
+  @Column(name = "is_registered", nullable = false)
+  private Boolean isRegistered;
 }

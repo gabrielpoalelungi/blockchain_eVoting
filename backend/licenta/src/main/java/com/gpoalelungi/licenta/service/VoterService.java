@@ -1,5 +1,6 @@
 package com.gpoalelungi.licenta.service;
 
+import com.gpoalelungi.licenta.exceptions.VoterNotFoundException;
 import com.gpoalelungi.licenta.model.User;
 import com.gpoalelungi.licenta.model.Voter;
 import com.gpoalelungi.licenta.repository.VoterRepository;
@@ -26,5 +27,15 @@ public class VoterService {
   public List<Voter> getAllVoters() {
     log.info("Getting all voters");
     return voterRepository.findAll();
+  }
+
+  public Boolean markVoterAsRegistered(Long voterId) {
+    log.info("Marking voter with id {} as registered", voterId);
+    Voter voter = voterRepository.findById(voterId)
+        .orElseThrow(() -> new VoterNotFoundException("Voter not found with id: " + voterId));
+
+    voter.setIsRegistered(true);
+    voterRepository.save(voter);
+    return true;
   }
 }
