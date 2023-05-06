@@ -54,4 +54,7 @@ public class Candidate {
   @Temporal(TemporalType.TIMESTAMP)
   @UpdateTimestamp
   private Date updatedAt;
+
+  @Column(name = "number_of_votes")
+  private Long numberOfVotes;
 }

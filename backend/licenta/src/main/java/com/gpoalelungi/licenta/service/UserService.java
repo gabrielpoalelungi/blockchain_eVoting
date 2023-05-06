@@ -1,7 +1,5 @@
 package com.gpoalelungi.licenta.service;
 
-
-
 import com.gpoalelungi.licenta.exceptions.UserNotFoundException;
 import com.gpoalelungi.licenta.model.IdentityCard;
 import com.gpoalelungi.licenta.model.User;
@@ -19,24 +17,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
   private final UserRepository userRepository;
-
   private final IdentityCardService identityCardService;
-
-  public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
-  }
 
   public User getLoggedUserDetails() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     String userEmail = ((User) auth.getPrincipal()).getEmail();
-    User user = userRepository.findByEmail(userEmail)
+    return userRepository.findByEmail(userEmail)
         .orElseThrow(() -> new UserNotFoundException("User with this email was not found"));
-
-    return user;
   }
 
-  public boolean validateIdentityCard(IdentityCard identityCard) {
-    // TODO: Do more here
+  public Boolean validateIdentityCard(IdentityCard identityCard) {
     return identityCardService.validateIdentityCard(identityCard);
   }
 }

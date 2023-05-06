@@ -4,11 +4,7 @@ package com.gpoalelungi.licenta.contract;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Bool;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
@@ -21,10 +17,7 @@ import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -33,12 +26,12 @@ import java.util.concurrent.TimeUnit;
 public class ElectionContractService {
 
   private final Web3j web3j = Web3j.build(new HttpService("http://localhost:7545"));
-  private static final String CONTRACT_ADDRESS = "0x5315494855613c4a8b4872689DAF326af83830bE";
+  private static final String CONTRACT_ADDRESS = "0x971a6E872Ca5F9Df3861d9500413E26aF35d4cfB";
   private static final String ADMIN_ADDRESS = "0x17987d50dD4439Ed4Cf3975Ef6752D1C7a076cA3"; // replace with your actual admin address
   private static final BigInteger GAS_LIMIT = BigInteger.valueOf(3000000);
   private static final BigInteger GAS_PRICE = BigInteger.valueOf(1000000000); // 1 Gwei
-  private ContractGasProvider contractGasProvider = new DefaultGasProvider();
-  private Election election = loadContract();
+  private final ContractGasProvider contractGasProvider = new DefaultGasProvider();
+  private final Election election = loadContract();
 
 
   private Election loadContract() {
@@ -64,7 +57,7 @@ public class ElectionContractService {
     do {
       TimeUnit.SECONDS.sleep(2);
       receiptOptional = web3j.ethGetTransactionReceipt(transactionHash).send().getTransactionReceipt();
-    } while (!receiptOptional.isPresent());
+    } while (receiptOptional.isEmpty());
 
     List<Election.VoteStartedOrFinishedEventResponse> events = Election.getVoteStartedOrFinishedEvents(receiptOptional.get());
     return events.get(0).message;
@@ -88,7 +81,7 @@ public class ElectionContractService {
     do {
       TimeUnit.SECONDS.sleep(2);
       receiptOptional = web3j.ethGetTransactionReceipt(transactionHash).send().getTransactionReceipt();
-    } while (!receiptOptional.isPresent());
+    } while (receiptOptional.isEmpty());
 
     List<Election.VoteStartedOrFinishedEventResponse> events = Election.getVoteStartedOrFinishedEvents(receiptOptional.get());
     return events.get(0).message;
@@ -144,7 +137,7 @@ public class ElectionContractService {
     do {
       TimeUnit.SECONDS.sleep(2);
       receiptOptional = web3j.ethGetTransactionReceipt(transactionHash).send().getTransactionReceipt();
-    } while (!receiptOptional.isPresent());
+    } while (receiptOptional.isEmpty());
 
     List<Election.VoterAddedEventResponse> events = Election.getVoterAddedEvents(receiptOptional.get());
     log.info("VoterAddedEventResponse: {}, {}, {}", events.get(0).isRegistered, events.get(0).hasVoted, events.get(0).hashedPublicKey);

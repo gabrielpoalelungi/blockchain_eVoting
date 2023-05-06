@@ -2,20 +2,22 @@ package com.gpoalelungi.licenta.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gpoalelungi.licenta.contract.ElectionContractService;
-import com.gpoalelungi.licenta.dto.VoteDto;
+import com.gpoalelungi.licenta.dto.CandidateResponse;
 import com.gpoalelungi.licenta.dto.VotingSessionRequest;
 import com.gpoalelungi.licenta.dto.VotingSessionResponse;
 import com.gpoalelungi.licenta.exceptions.VotingSessionNotFoundException;
 import com.gpoalelungi.licenta.model.VotingSession;
 import com.gpoalelungi.licenta.model.VotingSessionStatus;
+import com.gpoalelungi.licenta.service.CandidateService;
+import com.gpoalelungi.licenta.service.VoterService;
 import com.gpoalelungi.licenta.service.VotingSessionService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.ws.rs.QueryParam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/voting-session")
@@ -32,7 +35,10 @@ import java.util.List;
 public class VotingSessionController {
   private final VotingSessionService votingSessionService;
   private final ElectionContractService electionContractService;
+  private final VoterService voterService;
+  private final CandidateService candidateService;
   private final ObjectMapper objectMapper;
+  private final ModelMapper modelMapper;
 
   @PostMapping("create")
   @PreAuthorize("hasAuthority('ADMIN')")
@@ -58,25 +64,14 @@ public class VotingSessionController {
     }
   }
 
-  @PutMapping("{id}/update-status")
+  @PutMapping("update-dates")
   @PreAuthorize("hasAuthority('ADMIN')")
-  public ResponseEntity<?> updateStatusVotingSession(@PathVariable("id") Long votingSessionId, @QueryParam("status") VotingSessionStatus newStatus) {
+  public ResponseEntity<?> updateVotingSessionDates(@RequestBody VotingSessionRequest newVotingSessionDates) {
     try {
-      votingSessionService.updateVotingSessionStatus(votingSessionId, newStatus);
-      return ResponseEntity.ok().build();
-    } catch (VotingSessionNotFoundException e) {
-      return ResponseEntity.notFound().build();
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
-  }
+      VotingSession votingSession = votingSessionService.editVotingSessionStartingEndingAt(newVotingSessionDates.startingAt, newVotingSessionDates.endingAt);
+      VotingSessionResponse votingSessionResponse = objectMapper.convertValue(votingSession, VotingSessionResponse.class);
 
-  @PutMapping("{id}/update-dates")
-  @PreAuthorize("hasAuthority('ADMIN')")
-  public ResponseEntity<?> updateVotingSessionDates(@PathVariable("id") Long votingSessionId, @RequestBody VotingSessionRequest newVotingSessionDates) {
-    try {
-      votingSessionService.editVotingSessionStartingEndingAt(votingSessionId, newVotingSessionDates.startingAt, newVotingSessionDates.endingAt);
-      return ResponseEntity.ok().build();
+      return ResponseEntity.ok(votingSessionResponse);
     } catch (VotingSessionNotFoundException e) {
       return ResponseEntity.notFound().build();
     } catch (Exception e) {
@@ -98,7 +93,7 @@ public class VotingSessionController {
   @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<?> addAllVoters() {
     try {
-      votingSessionService.addAllVotersToContract();
+      voterService.addAllVotersToContract();
       return ResponseEntity.ok().build();
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(e.getMessage());
@@ -147,12 +142,14 @@ public class VotingSessionController {
     }
   }
 
-  @PostMapping("/test-decrypt-vote")
-  @PreAuthorize("hasAuthority('ADMIN')")
-  public ResponseEntity<String> decryptVote(@RequestBody VoteDto voteRequest) {
+  @GetMapping("/results")
+  public ResponseEntity<?> getResults() {
     try {
-      String message = votingSessionService.decryptVote(voteRequest.getPublicKey(), voteRequest.getEncryptedVote(), voteRequest.getSignature());
-      return ResponseEntity.ok(message);
+      candidateService.countVotesForCandidates();
+      return ResponseEntity.ok(candidateService.getAllCandidates()
+          .stream()
+          .map(candidate -> modelMapper.map(candidate, CandidateResponse.class))
+          .collect(Collectors.toList()));
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     }

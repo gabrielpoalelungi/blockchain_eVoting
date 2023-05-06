@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VoterResponse {
   public String publicKey;
+  public String privateKey;
 }

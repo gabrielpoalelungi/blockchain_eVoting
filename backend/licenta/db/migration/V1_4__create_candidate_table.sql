@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS candidate (
       description                      TEXT,
       photo_url                        TEXT NOT NULL,
       created_at                       TIMESTAMP NOT NULL,
-      updated_at                       TIMESTAMP NOT NULL
+      updated_at                       TIMESTAMP NOT NULL,
+      number_of_votes                  BIGINT
 );
 
 CREATE SEQUENCE candidate_id_seq

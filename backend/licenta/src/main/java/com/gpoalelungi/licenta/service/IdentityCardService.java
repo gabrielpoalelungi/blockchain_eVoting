@@ -69,7 +69,7 @@ public class IdentityCardService {
         }
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month - 1, day); // Note that the month is 0-based, so subtract 1
+        calendar.set(year, month - 1, day);
 
         Date date = calendar.getTime();
         return (date.getYear() + 18) < Date.from(Instant.now()).getYear();
