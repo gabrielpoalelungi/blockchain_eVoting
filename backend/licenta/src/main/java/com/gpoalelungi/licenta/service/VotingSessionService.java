@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -38,7 +39,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
+import java.security.MessageDigest;
+
 
 @Service
 @Slf4j
@@ -195,7 +197,7 @@ public class VotingSessionService {
     byte[] privateKeyBytes = Base64.getDecoder().decode(votingSession.getReleasePrivateKey());
 
     KeyFactory privateKeyFactory = KeyFactory.getInstance("RSA");
-    EncodedKeySpec privateKeySpec = new X509EncodedKeySpec(privateKeyBytes);
+    EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
     PrivateKey privateKey = privateKeyFactory.generatePrivate(privateKeySpec);
 
     Cipher cipher = Cipher.getInstance("RSA");
@@ -215,7 +217,25 @@ public class VotingSessionService {
 
     String decryptedSignature = new String(cipher.doFinal(Base64.getDecoder().decode(voteSignature)));
 
-    return BCrypt.checkpw(voterPublicKey + encryptedVote, decryptedSignature);
+    String encryptedVoteHash = getSha256Hash(voterPublicKey + encryptedVote);
+    return encryptedVoteHash.equals(decryptedSignature);
+  }
+
+  private String getSha256Hash(String plainText) throws NoSuchAlgorithmException {
+    MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    byte[] encodedHash = digest.digest(plainText.getBytes(StandardCharsets.UTF_8));
+
+    // Convert the byte array to a hexadecimal string
+    StringBuilder hexString = new StringBuilder();
+    for (byte b : encodedHash) {
+      String hex = Integer.toHexString(0xff & b);
+      if (hex.length() == 1) {
+        hexString.append('0');
+      }
+      hexString.append(hex);
+    }
+
+    return hexString.toString();
   }
 
 }
