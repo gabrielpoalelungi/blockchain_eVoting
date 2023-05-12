@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,28 +10,32 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from "react-router-dom";
 import jwt from 'jwt-decode'
 import {login} from '../pages/store.js'
 import { useDispatch } from "react-redux";
 import Axios from "axios";
+import { useForm } from "react-hook-form";
+import * as yup from 'yup';
+import {yupResolver} from "@hookform/resolvers/yup";
+import { useNavigate } from "react-router-dom";
 
 
 const theme = createTheme();
 
 export default function SignIn() {
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
+  const schemaValidation = yup.object().shape({
+      email: yup.string().email("*Invalid email").required("*email required"),
+      password: yup.string().min(8).max(16).required("*password required"),
+  })
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+  const {register, handleSubmit, formState: {errors}} = useForm({
+      resolver: yupResolver(schemaValidation)
+  });
 
+  const doLogin = (data) => {
     Axios
         .post("http://localhost:8080/auth/login", data)
         .then((response) => {
@@ -54,7 +56,7 @@ export default function SignIn() {
         .catch((error) => {
             alert("Bad credentials")
         })
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -74,7 +76,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit(doLogin)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -82,8 +84,11 @@ export default function SignIn() {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
               autoFocus
+              
+              error={errors.email?.message}
+              helperText={errors.email?.message}
+              {...register("email")}
             />
             <TextField
               margin="normal"
@@ -93,7 +98,10 @@ export default function SignIn() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+
+              error={errors.password?.message}
+              helperText={errors.password?.message}
+              {...register("password")}
             />
             <Button
               type="submit"

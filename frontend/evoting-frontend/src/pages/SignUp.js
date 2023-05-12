@@ -21,12 +21,6 @@ const theme = createTheme();
 export default function SignUp() {
   const navigate = useNavigate();
 
-  const handler = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-
-  };
-
   const schemaValidation = yup.object().shape({
       firstName: yup.string().required("*first name required"),
       lastName: yup.string().required("*last name required"),
