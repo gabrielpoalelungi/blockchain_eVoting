@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,5 +19,8 @@ public class RegisterRequest {
     private String email;
     private String password;
     private String phoneNumber;
-    private IdentityCard identityCard;
+    private String CNP;
+    private String idCardNumber;
+    private Date expirationDate;
+
 }

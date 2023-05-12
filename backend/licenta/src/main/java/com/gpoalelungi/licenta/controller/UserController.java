@@ -21,22 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
   private final UserService userService;
 
-  @GetMapping("{id}")
-  @PreAuthorize("hasAuthority('ADMIN')")
-  public ResponseEntity<UserResponse> getUserId(@PathVariable("id") Long userId) {
-    try {
-      User foundUser = userService.getUserById(userId);
-        UserResponse userResponse = UserResponse.builder()
-            .email(foundUser.getEmail())
-            .phoneNumber(foundUser.getPhoneNumber())
-            .build();
-
-      return ResponseEntity.ok(userResponse);
-    } catch (UserNotFoundException e) {
-      return ResponseEntity.notFound().build();
-    }
-  }
-
   @GetMapping("/logged-user")
   public ResponseEntity<UserResponse> getLoggedUserDetails() {
     try {

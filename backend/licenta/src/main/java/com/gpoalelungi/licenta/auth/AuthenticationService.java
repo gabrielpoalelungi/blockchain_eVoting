@@ -55,16 +55,22 @@ public class AuthenticationService {
             throw new UserAlreadyExistsException("User already registered with this phone number!");
         }
 
-        if(!userService.validateIdentityCard(request.getIdentityCard())) {
+        IdentityCard identityCard = IdentityCard.builder()
+                .CNP(request.getCNP())
+                .idCardNumber(request.getIdCardNumber())
+                .expirationDate(request.getExpirationDate())
+                .build();
+
+        if(!userService.validateIdentityCard(identityCard)) {
             log.error("Invalid identity card!");
             throw new InvalidIdentityCardException("Invalid identity card!");
         }
 
-        String hashedIdentityCard = passwordEncoder.encode(identityCardJsonConverter.convertToDatabaseColumn(request.getIdentityCard()));
+        String hashedIdentityCard = passwordEncoder.encode(identityCardJsonConverter.convertToDatabaseColumn(identityCard));
 
         List<User> users = userRepository.findAll();
         for (User user : users) {
-            if (passwordEncoder.matches(identityCardJsonConverter.convertToDatabaseColumn(request.getIdentityCard()), user.getHashedIdentityCard())) {
+            if (passwordEncoder.matches(identityCardJsonConverter.convertToDatabaseColumn(identityCard), user.getHashedIdentityCard())) {
                 log.error("User already registered with this identity card!");
                 throw new UserAlreadyExistsException("User already registered with this identity card!");
             }

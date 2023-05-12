@@ -33,10 +33,11 @@ export default function SignUp() {
       email: yup.string().email("*Invalid email").required("*email required"),
       phoneNumber: yup.string().required("*phone number required")
         .matches(/^(07)[2-9]{1}[0-9]{7}$/, "Phone number must be in the format 07XXXXXXXX"),
-      cnp: yup.string().required("*CNP required")
+      cnp: yup.string().required("*cnp required")
         .matches(/^[1-8]\d{12}$/, "CNP must be a 13-digit number starting with a digit between 1-8"),
-      serialNumber: yup.string().required("*Serial Number required")
+        idCardNumber: yup.string().required("*Serial Number required")
         .matches(/^[A-Z]{2}\d{6}$/, 'Serial number must be in the format XX000000, where X is an uppercase letter and 0 is a digit'),
+      expirationDate: yup.string().required("*expiration date required"),
       password: yup.string().min(8).max(16).required("*password required"),
       confirmPassword: yup.string().oneOf([yup.ref("password"), null], "*passwords do not match").required()
   })
@@ -146,13 +147,28 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
-                  id="serialNumber"
+                  id="idCardNumber"
                   label="Serial Number"
-                  name="serialNumber"
+                  name="idCardNumber"
 
-                  error={errors.serialNumber?.message}
-                  helperText={errors.serialNumber?.message}
-                  {...register("serialNumber")}
+                  error={errors.idCardNumber?.message}
+                  helperText={errors.idCardNumber?.message}
+                  {...register("idCardNumber")}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="expirationDate"
+                  label="Expiration Date"
+                  name="expirationDate"
+                  type="date"
+                  InputLabelProps={{shrink: true}}
+
+                  error={errors.expirationDate?.message}
+                  helperText={errors.expirationDate?.message}
+                  {...register("expirationDate")}
                 />
               </Grid>
               <Grid item xs={12}>
