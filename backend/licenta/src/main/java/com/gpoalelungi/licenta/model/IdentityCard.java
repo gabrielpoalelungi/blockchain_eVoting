@@ -33,8 +33,6 @@ import java.util.Date;
 @Builder
 public class IdentityCard {
 
-    Citizenship citizenship;
-
     @Pattern(regexp = "[1-25-6][0-9][0-9][0-1][1-9][0-3][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", message = "CNP bad formatted")
     String CNP;
 
@@ -43,11 +41,6 @@ public class IdentityCard {
 
     @Temporal(TemporalType.DATE)
     Date expirationDate;
-
-    enum Citizenship {
-        ROU,
-        ANY
-    }
 }
 
 

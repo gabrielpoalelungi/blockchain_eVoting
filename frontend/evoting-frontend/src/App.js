@@ -1,13 +1,12 @@
 import './App.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
 import { Provider } from 'react-redux';
-import { store } from './components/store.js';
+import { store } from './pages/store.js';
 import { Main } from './pages/Main';
-import Paperbase from './components/Paperbase';
-
-
+import SignIn from './pages/SignIn';
+import BasePage from './pages/BasePage';
+import SignUp from './pages/SignUp';
 
 
 function App() {
@@ -24,7 +23,9 @@ function App() {
           <BrowserRouter>
             {/* <Navbar /> */}
             <Routes>
-              <Route path="/" element={<Paperbase />}/>
+              <Route path="/" element={<BasePage />}/>
+              <Route path="/signin" element={<SignIn />}/>
+              <Route path="/signup" element={<SignUp />}/>
             </Routes>
           </BrowserRouter>
         </Provider>

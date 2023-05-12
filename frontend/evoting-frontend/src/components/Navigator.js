@@ -55,12 +55,14 @@ export default function Navigator(props) {
         <ListItem sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}>
           PoliVote
         </ListItem>
+
         <ListItem sx={{ ...item, ...itemCategory }}>
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
           <ListItemText>Home Page</ListItemText>
         </ListItem>
+
         {categories.map(({ id, children }) => (
           <Box key={id} sx={{ bgcolor: '#101F33' }}>
             <ListItem sx={{ py: 2, px: 3 }}>
@@ -77,6 +79,7 @@ export default function Navigator(props) {
             <Divider sx={{ mt: 2 }} />
           </Box>
         ))}
+        
         <Box sx={{ bgcolor: '#101F33' }}>
           <ListItem>
             <ListItemText sx={{ color: '#ccc', fontSize: '120%' }} disableTypography>When does it start?</ListItemText>
