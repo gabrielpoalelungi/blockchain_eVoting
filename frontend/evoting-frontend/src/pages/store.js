@@ -11,7 +11,9 @@ const userSlice = createSlice({
         },
 
         logout: (state, action) => {
-            state = initialState
+            state.value.username = "";
+            state.value.isLogged = false;
+            state.value.role = "";
         }
     }
 });

@@ -161,6 +161,7 @@ public class VotingSessionService {
     return new String(cipher.doFinal(Base64.getDecoder().decode(voteToDecrypt)));
   }
 
+  // TODO: check in DB if the public Key exists
   private Boolean isVoteValid(String voteSignature, String voterPublicKey, String encryptedVote) throws Exception{
     byte[] voterPublicKeyBytes = Base64.getDecoder().decode(voterPublicKey);
     KeyFactory publicKeyFactory = KeyFactory.getInstance("RSA");

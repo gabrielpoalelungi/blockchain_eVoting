@@ -7,24 +7,41 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import { logout } from '../pages/store';
 
-function Header(props) {
-  const { onDrawerToggle } = props;
+
+function Header() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  let isLogged = useSelector((state) => state.user.value.isLogged);
+  let role = useSelector((state) => state.user.value.role);
+  let email = useSelector((state) => state.user.value.username);
+
+  const logoutAction = () => {
+    dispatch(logout())
+    localStorage.setItem('jwt_token', null);
+    alert("Logged out!")
+    isLogged = false;
+    navigate("/")
+  }
 
   return (
     <React.Fragment>
       <AppBar color="primary" position="sticky" elevation={0}>
         <Toolbar>
           <Grid container spacing={1} alignItems="center">
-            <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={onDrawerToggle}
-                edge="start"
-              >
-                <MenuIcon />
-              </IconButton>
+            <Grid item>
+              {isLogged && (
+                <Button variant="contained" color="secondary" onClick={logoutAction}>
+                  Logout
+                </Button>
+              )}
             </Grid>
             <Grid item xs />
             <Grid item>
@@ -33,7 +50,14 @@ function Header(props) {
               </IconButton>
             </Grid>
             <Grid>
-              <Typography fontSize={'20px'} style={{marginTop: "10%"}}>UserName</Typography>
+              {isLogged && (
+                <Typography fontSize={'120%'} marginTop={'4%'}>{email}</Typography>
+              )}
+              {!isLogged && 
+                  <Typography fontSize={'20px'} style={{marginTop: "10%"}}>
+                    <Link to="/signin" color="inherit"> Sign in</Link>
+                  </Typography>
+              }
             </Grid>
           </Grid>
         </Toolbar>
@@ -44,8 +68,7 @@ function Header(props) {
         position="static"
         elevation={0}
         sx={{ zIndex: 0 }}
-      >
-      </AppBar>
+      />
     </React.Fragment>
   );
 }
