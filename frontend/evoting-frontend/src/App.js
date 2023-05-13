@@ -16,6 +16,12 @@ function App() {
     }
   }});
 
+  // Attach an event listener to the window.onbeforeunload event
+  window.onbeforeunload = function() {
+    // Clear the variable from local storage
+    localStorage.removeItem("jwt_token");
+  };
+
   return (
     <div className="App">
         <QueryClientProvider client={client}>

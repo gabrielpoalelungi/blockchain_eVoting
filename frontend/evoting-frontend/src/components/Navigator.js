@@ -14,6 +14,10 @@ import HowToVoteRoundedIcon from '@mui/icons-material/HowToVoteRounded';
 import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import Chip from '@mui/material/Chip';
+import { useQuery } from '@tanstack/react-query';
+import Axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const categories = [
   {
@@ -48,6 +52,41 @@ const itemCategory = {
 
 export default function Navigator(props) {
   const { ...other } = props;
+  const navigate = useNavigate();
+
+
+  const [votingSession, setVotingSession] = React.useState()
+
+    const {data, isLoading, isError, refetch} = useQuery(["eventQuery"], () => {
+        const token = `Bearer ${localStorage.getItem("jwt_token")}`
+        if (localStorage.getItem("jwt_token") !== null) {
+          return Axios
+            .get(
+                "http://localhost:8080/voting-session",
+                { headers: {
+                    "Authorization" : token
+                }}
+            )
+            .then((response) => setVotingSession(response.data))
+            .catch((error) => {
+              console.log(error)
+              if (error.response.status === 403) {
+                alert("Session has expired. Please log in again!");
+                navigate("/signin");
+              }
+          })
+        }
+        return null
+    })
+
+    const convertToReadableDate = (rawDate) => {
+      let finalDate = ""
+      console.log(rawDate)
+      if (rawDate !== undefined) {
+        finalDate = rawDate.substring(0, 10) + " " + rawDate.substring(11, 16)
+      }
+      return finalDate
+    };
 
   return (
     <Drawer variant="permanent" {...other}>
@@ -58,11 +97,10 @@ export default function Navigator(props) {
 
         <ListItem sx={{ ...item, ...itemCategory }}>
           <ListItemIcon>
-            <HomeIcon />
+            <HomeIcon clickable/>
           </ListItemIcon>
           <ListItemText>Home Page</ListItemText>
         </ListItem>
-
         {categories.map(({ id, children }) => (
           <Box key={id} sx={{ bgcolor: '#101F33' }}>
             <ListItem sx={{ py: 2, px: 3 }}>
@@ -84,19 +122,19 @@ export default function Navigator(props) {
           <ListItem>
             <ListItemText sx={{ color: '#ccc', fontSize: '120%' }} disableTypography>When does it start?</ListItemText>
           </ListItem>
-          <Chip label="15.06.2023 09:00" color="success" clickable/>
+          <Chip label={convertToReadableDate(votingSession?.startingAt)} color="success" clickable/>
           <Divider sx={{ mt: 2}} />
 
           <ListItem>
             <ListItemText sx={{ color: '#ccc', fontSize: '120%' }} disableTypography>When does it end?</ListItemText>
           </ListItem>
-          <Chip label="15.06.2023 21:00" color="error" size='medium' clickable/>
+          <Chip label={convertToReadableDate(votingSession?.endingAt)} color="error" size='medium' clickable/>
           <Divider sx={{ mt: 1 }} />
           
           <ListItem>
             <ListItemText sx={{ color: '#ccc', fontSize: '120%' }} disableTypography>Session status</ListItemText>
           </ListItem>
-          <Chip color="error" label="Not started" clickable/>
+          <Chip color="error" label={votingSession?.votingSessionStatus} clickable/>
         </Box>
       </List>
     </Drawer>
