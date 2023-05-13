@@ -17,9 +17,7 @@ import Chip from '@mui/material/Chip';
 import { useQuery } from '@tanstack/react-query';
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-
-
+import { useSelector, useDispatch } from "react-redux";
 
 const item = {
   py: '2px',
@@ -38,6 +36,7 @@ const itemCategory = {
 
 export default function Navigator(props) {
   const { ...other } = props;
+  let isLogged = useSelector((state) => state.user.value.isLogged);
   const navigate = useNavigate();
   const [categories, setCategories] = React.useState([
     {
@@ -46,47 +45,46 @@ export default function Navigator(props) {
         {
           id: 0,
           name: 'What are we voting for?',
-          icon: <InfoRoundedIcon />
+          icon: <InfoRoundedIcon />,
+          navigateTo: "/whatarewevotingfor"
         },
-        { id: 1, name: 'Who are the candidates?', icon: <PermContactCalendarRoundedIcon /> },
-        { id: 2, name: 'How to vote?', icon: <QuestionMarkIcon />},
+        { id: 1, name: 'Who are the candidates?', icon: <PermContactCalendarRoundedIcon />, navigateTo: "/whoarethecandidates" },
+        { id: 2, name: 'How to vote?', icon: <QuestionMarkIcon />, navigateTo: "/howtovote"},
         { id: 3, name: 'Cast a vote', icon: <HowToVoteRoundedIcon />},
         { id: 4, name: 'Results', icon: <BarChartRoundedIcon />}
       ,]
     }
   ])
 
-  const[itemsActive, setItemsActive] = React.useState([false, false, false, false, false]);
-
-
   const [votingSession, setVotingSession] = React.useState()
 
-    const {data, isLoading, isError, refetch} = useQuery(["eventQuery"], () => {
-        const token = `Bearer ${localStorage.getItem("jwt_token")}`
-        if (localStorage.getItem("jwt_token") !== null) {
-          return Axios
-            .get(
-                "http://localhost:8080/voting-session",
-                { headers: {
-                    "Authorization" : token
-                }}
-            )
-            .then((response) => setVotingSession(response.data))
-            .catch((error) => {
-              console.log(error)
-              if (error.response.status === 403) {
-                alert("Session has expired. Please log in again!");
-                navigate("/signin");
-              }
-          })
-        }
-        return null
-    })
+  const {data, isLoading, isError, refetch} = useQuery(["eventQuery"], () => {
+    console.log(props);
+    console.log(other);
+      const token = `Bearer ${localStorage.getItem("jwt_token")}`
+      if (localStorage.getItem("jwt_token") !== null) {
+        return Axios
+          .get(
+              "http://localhost:8080/voting-session",
+              { headers: {
+                  "Authorization" : token
+              }}
+          )
+          .then((response) => setVotingSession(response.data))
+          .catch((error) => {
+            console.log(error)
+            if (error.response.status === 403) {
+              alert("Session has expired. Please log in again!");
+              navigate("/signin");
+            }
+        })
+      }
+      return null
+  })
 
   const convertToReadableDate = (rawDate) => {
-    let finalDate = ""
-    console.log(rawDate)
-    if (rawDate !== undefined) {
+    let finalDate = "not available"
+    if (rawDate !== undefined && isLogged) {
       finalDate = rawDate.substring(0, 10) + " " + rawDate.substring(11, 16)
     }
     return finalDate
@@ -95,9 +93,13 @@ export default function Navigator(props) {
   const changeItemsActive = (id) => {
     const newItemsActive = [false, false, false, false, false];
     newItemsActive[id] = true;
-    setItemsActive(newItemsActive);
+    props.setItemsActive(newItemsActive);
   }
 
+  const resetItemsActive = () => {
+    const newItemsActive = [false, false, false, false, false];
+    props.setItemsActive(newItemsActive);
+  }
 
   return (
     <Drawer variant="permanent" {...other}>
@@ -107,19 +109,21 @@ export default function Navigator(props) {
         </ListItem>
 
         <ListItem sx={{ ...item, ...itemCategory }}>
-          <ListItemIcon>
-            <HomeIcon clickable/>
-          </ListItemIcon>
-          <ListItemText>Home Page</ListItemText>
+          <ListItemButton onClick={() => {resetItemsActive(); navigate("/")}}>
+            <ListItemIcon>
+              <HomeIcon/>
+            </ListItemIcon>
+            <ListItemText>Home Page</ListItemText>
+          </ListItemButton>
         </ListItem>
         {categories.map(({ id, children }) => (
           <Box key={id} sx={{ bgcolor: '#101F33' }}>
             <ListItem sx={{ py: 2, px: 3 }}>
               <ListItemText sx={{ color: '#fff', fontSize: '120%' }} disableTypography>{id}</ListItemText>
             </ListItem>
-            {children.map(({ id, name: childId, icon }) => (
+            {children.map(({ id, name: childId, icon, navigateTo }) => (
               <ListItem disablePadding key={childId}>
-                <ListItemButton selected={itemsActive[id]} sx={item} onClick={() => changeItemsActive(id)}>
+                <ListItemButton selected={props.itemsActive[id]} sx={item} onClick={() => {changeItemsActive(id); navigate(navigateTo)}}>
                   <ListItemIcon>{icon}</ListItemIcon>
                   <ListItemText>{childId}</ListItemText>
                 </ListItemButton>
@@ -145,7 +149,7 @@ export default function Navigator(props) {
           <ListItem>
             <ListItemText sx={{ color: '#ccc', fontSize: '120%' }} disableTypography>Session status</ListItemText>
           </ListItem>
-          <Chip color="error" label={votingSession?.votingSessionStatus} clickable/>
+          <Chip color="error" label={votingSession && isLogged ? votingSession.votingSessionStatus : "not available"} clickable/>
         </Box>
       </List>
     </Drawer>

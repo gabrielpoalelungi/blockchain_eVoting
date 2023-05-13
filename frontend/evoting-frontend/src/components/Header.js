@@ -4,13 +4,10 @@ import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import { logout } from '../pages/store';
 

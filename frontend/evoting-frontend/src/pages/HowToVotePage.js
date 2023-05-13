@@ -3,8 +3,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Navigator from '../components/Navigator';
+import HowToVoteContent from './HowToVoteContent';
 import Header from '../components/Header';
-import WhatAreWeVotingForContent from './WhatAreWeVotingForContent';
 
 let theme = createTheme({
   palette: {
@@ -151,7 +151,7 @@ theme = {
 
 const drawerWidth = 256;
 
-export default function WhatAreWeVotingForMain(props) {
+export default function BasePage(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
@@ -176,7 +176,7 @@ export default function WhatAreWeVotingForMain(props) {
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <Header onDrawerToggle={handleDrawerToggle} />
             <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1' }}>
-              <WhatAreWeVotingForContent />
+              <HowToVoteContent />
             </Box>
             <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
             </Box>
