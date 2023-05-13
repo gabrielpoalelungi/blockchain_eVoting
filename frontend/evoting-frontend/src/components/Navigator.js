@@ -19,21 +19,7 @@ import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 
-const categories = [
-  {
-    id: 'Actions',
-    children: [
-      {
-        id: 'What are we voting for?',
-        icon: <InfoRoundedIcon />
-      },
-      { id: 'Who are the candidates?', icon: <PermContactCalendarRoundedIcon /> },
-      { id: 'How to vote?', icon: <QuestionMarkIcon /> },
-      { id: 'Cast a vote', icon: <HowToVoteRoundedIcon /> },
-      { id: 'Results', icon: <BarChartRoundedIcon /> }
-    ,]
-  }
-];
+
 
 const item = {
   py: '2px',
@@ -53,6 +39,24 @@ const itemCategory = {
 export default function Navigator(props) {
   const { ...other } = props;
   const navigate = useNavigate();
+  const [categories, setCategories] = React.useState([
+    {
+      id: 'Actions',
+      children: [
+        {
+          id: 0,
+          name: 'What are we voting for?',
+          icon: <InfoRoundedIcon />
+        },
+        { id: 1, name: 'Who are the candidates?', icon: <PermContactCalendarRoundedIcon /> },
+        { id: 2, name: 'How to vote?', icon: <QuestionMarkIcon />},
+        { id: 3, name: 'Cast a vote', icon: <HowToVoteRoundedIcon />},
+        { id: 4, name: 'Results', icon: <BarChartRoundedIcon />}
+      ,]
+    }
+  ])
+
+  const[itemsActive, setItemsActive] = React.useState([false, false, false, false, false]);
 
 
   const [votingSession, setVotingSession] = React.useState()
@@ -79,14 +83,21 @@ export default function Navigator(props) {
         return null
     })
 
-    const convertToReadableDate = (rawDate) => {
-      let finalDate = ""
-      console.log(rawDate)
-      if (rawDate !== undefined) {
-        finalDate = rawDate.substring(0, 10) + " " + rawDate.substring(11, 16)
-      }
-      return finalDate
-    };
+  const convertToReadableDate = (rawDate) => {
+    let finalDate = ""
+    console.log(rawDate)
+    if (rawDate !== undefined) {
+      finalDate = rawDate.substring(0, 10) + " " + rawDate.substring(11, 16)
+    }
+    return finalDate
+  };
+
+  const changeItemsActive = (id) => {
+    const newItemsActive = [false, false, false, false, false];
+    newItemsActive[id] = true;
+    setItemsActive(newItemsActive);
+  }
+
 
   return (
     <Drawer variant="permanent" {...other}>
@@ -106,9 +117,9 @@ export default function Navigator(props) {
             <ListItem sx={{ py: 2, px: 3 }}>
               <ListItemText sx={{ color: '#fff', fontSize: '120%' }} disableTypography>{id}</ListItemText>
             </ListItem>
-            {children.map(({ id: childId, icon }) => (
+            {children.map(({ id, name: childId, icon }) => (
               <ListItem disablePadding key={childId}>
-                <ListItemButton sx={item} onClick={() => alert("test")}>
+                <ListItemButton selected={itemsActive[id]} sx={item} onClick={() => changeItemsActive(id)}>
                   <ListItemIcon>{icon}</ListItemIcon>
                   <ListItemText>{childId}</ListItemText>
                 </ListItemButton>
