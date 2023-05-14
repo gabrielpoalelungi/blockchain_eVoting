@@ -3,8 +3,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Navigator from '../components/Navigator';
-import HowToVoteContent from '../components/HowToVoteContent';
+import CastAVoteContent from '../components/CastAVoteContent';
 import Header from '../components/Header';
+import { useQuery } from '@tanstack/react-query';
+import Axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 let theme = createTheme({
   palette: {
@@ -151,12 +154,36 @@ theme = {
 
 const drawerWidth = 256;
 
-export default function BasePage(props) {
+export default function CastAVotePage(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [votingSession, setVotingSession] = React.useState()
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  const {data, isLoading, isError, refetch} = useQuery(["votingSessionQuery2"], () => {
+      const token = `Bearer ${localStorage.getItem("jwt_token")}`
+      if (localStorage.getItem("jwt_token") !== null) {
+        return Axios
+          .get(
+              "http://localhost:8080/voting-session",
+              { headers: {
+                  "Authorization" : token
+              }}
+          )
+          .then((response) => setVotingSession(response.data))
+          .catch((error) => {
+            console.log(error)
+            if (error.response.status === 403) {
+              alert("Session has expired. Please log in again!");
+              navigate("/signin");
+            }
+        })
+      }
+      return null
+  })
 
   return (
       <ThemeProvider theme={theme}>
@@ -176,7 +203,7 @@ export default function BasePage(props) {
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <Header onDrawerToggle={handleDrawerToggle} />
             <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1' }}>
-              <HowToVoteContent />
+              <CastAVoteContent votingSession={votingSession}/>
             </Box>
             <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
             </Box>

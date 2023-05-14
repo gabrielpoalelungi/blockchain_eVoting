@@ -10,6 +10,7 @@ import WhatAreWeVotingForPage from './pages/WhatAreWeVotingForPage';
 import HowToVotePage from './pages/HowToVotePage';
 import * as React from 'react';
 import WhoAreTheCandidatesPage from './pages/WhoAreTheCandidatesPage';
+import CastAVotePage from './pages/CastAVotePage';
 
 function App() {
   const client = new QueryClient({defaultOptions :{
@@ -38,6 +39,8 @@ function App() {
               <Route path="/whatarewevotingfor" element={<WhatAreWeVotingForPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
               <Route path="/howtovote" element={<HowToVotePage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
               <Route path="/whoarethecandidates" element={<WhoAreTheCandidatesPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/vote" element={<CastAVotePage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+
             </Routes>
           </BrowserRouter>
         </Provider>

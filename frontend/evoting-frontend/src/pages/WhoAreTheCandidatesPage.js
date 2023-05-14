@@ -4,7 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Navigator from '../components/Navigator';
 import Header from '../components/Header';
-import WhoAreTheCandidatesContent from './WhoAreTheCandidatesContent';
+import WhoAreTheCandidatesContent from '../components/WhoAreTheCandidatesContent';
 
 let theme = createTheme({
   palette: {

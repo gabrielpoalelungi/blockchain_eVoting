@@ -50,7 +50,7 @@ export default function Navigator(props) {
         },
         { id: 1, name: 'Who are the candidates?', icon: <PermContactCalendarRoundedIcon />, navigateTo: "/whoarethecandidates" },
         { id: 2, name: 'How to vote?', icon: <QuestionMarkIcon />, navigateTo: "/howtovote"},
-        { id: 3, name: 'Cast a vote', icon: <HowToVoteRoundedIcon />},
+        { id: 3, name: 'Cast a vote', icon: <HowToVoteRoundedIcon />, navigateTo: "/vote"},
         { id: 4, name: 'Results', icon: <BarChartRoundedIcon />}
       ,]
     }
@@ -58,9 +58,7 @@ export default function Navigator(props) {
 
   const [votingSession, setVotingSession] = React.useState()
 
-  const {data, isLoading, isError, refetch} = useQuery(["eventQuery"], () => {
-    console.log(props);
-    console.log(other);
+  const {data, isLoading, isError, refetch} = useQuery(["votingSessionQuery"], () => {
       const token = `Bearer ${localStorage.getItem("jwt_token")}`
       if (localStorage.getItem("jwt_token") !== null) {
         return Axios
@@ -72,7 +70,6 @@ export default function Navigator(props) {
           )
           .then((response) => setVotingSession(response.data))
           .catch((error) => {
-            console.log(error)
             if (error.response.status === 403) {
               alert("Session has expired. Please log in again!");
               navigate("/signin");
