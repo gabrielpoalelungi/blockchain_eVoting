@@ -87,11 +87,7 @@ public class CandidateService {
 
     List<Candidate> candidates = getAllCandidates();
     List<Election.Vote> votes = votingSessionService.getAllVotes();
-
     for (Election.Vote vote : votes) {
-      if (vote.equals(votes.get(votes.size() - 1))) {
-        continue;
-      }
       String choice = votingSessionService.decryptVote(vote.publicKey, vote.encryptedVote, vote.signature);
       for (Candidate candidate : candidates) {
         if (candidate.getOfficialName().toLowerCase(Locale.ROOT).equals(choice.toLowerCase(Locale.ROOT))) {

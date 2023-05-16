@@ -171,26 +171,31 @@ public class VotingSessionService {
     Cipher cipher = Cipher.getInstance("RSA");
     cipher.init(Cipher.DECRYPT_MODE, publicKey);
 
-    String decryptedSignature = new String(cipher.doFinal(Base64.getDecoder().decode(voteSignature)));
+    byte[] decryptedSignature = cipher.doFinal(Base64.getDecoder().decode(voteSignature));
 
+    String decryptedSignatureToString = bytesToHex(decryptedSignature);
     String encryptedVoteHash = getSha256Hash(voterPublicKey + encryptedVote);
-    return encryptedVoteHash.equals(decryptedSignature);
+
+    return encryptedVoteHash.equals(decryptedSignatureToString);
   }
 
   private String getSha256Hash(String plainText) throws NoSuchAlgorithmException {
     MessageDigest digest = MessageDigest.getInstance("SHA-256");
     byte[] encodedHash = digest.digest(plainText.getBytes(StandardCharsets.UTF_8));
 
+    return bytesToHex(encodedHash);
+  }
+
+  private String bytesToHex(byte[] input) {
     // Convert the byte array to a hexadecimal string
     StringBuilder hexString = new StringBuilder();
-    for (byte b : encodedHash) {
+    for (byte b : input) {
       String hex = Integer.toHexString(0xff & b);
       if (hex.length() == 1) {
         hexString.append('0');
       }
       hexString.append(hex);
     }
-
     return hexString.toString();
   }
 

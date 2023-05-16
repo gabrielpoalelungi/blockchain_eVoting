@@ -45,11 +45,11 @@ const votingAvailableContent = (candidateList, castVote) => {
 											/>
 											<CardContent sx={{ flexGrow: 1 }}>
 												<Typography gutterBottom variant="h5" component="h2">
-												{candidate.officialName}
+													{candidate.officialName}
 												</Typography>
 											</CardContent>
 											<CardActions>
-												<Button size="small" variant="contained" color="success" onClick={castVote}>Vote</Button>
+												<Button size="small" variant="contained" color="success" onClick={() => castVote(candidate.officialName)}>Vote</Button>
 											</CardActions>
 											</Card>
 										</Grid>
@@ -89,6 +89,7 @@ export default function CastAVoteContent(props) {
 	const [electionSmartContract, setElectionSmartContract] = React.useState(null);
 	const [loading, setLoading] = useState(true);
 	const [account, setAccount] = useState('');
+	const [userInfo, setUserInfo] = React.useState();
 
 	let isLogged = useSelector((state) => state.user.value.isLogged);
 	const navigate = useNavigate();
@@ -150,13 +151,36 @@ export default function CastAVoteContent(props) {
 		return null
 	})
 
-	const castVote = async (userPublicKey, userPrivateKey, userChoice) => {
-		console.log(signVote("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzZPRRwUL/G0vm7x0Pufmvy1X2rvS47n5qDjv1wZJAKX7GZoACauIsGPv9vIIhI9k1yOic+mlDglinaP4Qh/BcZhG5z4QKJUdEhidbuSwgOYn1fVy38fAqZHczKam2bMg+cpKWKybkcuT79ZS6v0nhRf4Eli9NQx1Mhggbmno21kaZV86cEDPcm8qcsSbVSEvfHNtpwbRDCCN5EFtD0FU/TUGOzgFH11n6605hGwnTjPxG5QqY2Wb3h3NGHgICRqJ9zOyGjYbiKJkw3w9BZ2ux3X0hthB8NaEA5p8MSzSVZ+Fcew4FCUJ3NX+MfFdyW7EyVDCRTQ/76O4mRFFyxKk+QIDAQAB", "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDNk9FHBQv8bS+bvHQ+5+a/LVfau9LjufmoOO/XBkkApfsZmgAJq4iwY+/28giEj2TXI6Jz6aUOCWKdo/hCH8FxmEbnPhAolR0SGJ1u5LCA5ifV9XLfx8CpkdzMpqbZsyD5ykpYrJuRy5Pv1lLq/SeFF/gSWL01DHUyGCBuaejbWRplXzpwQM9ybypyxJtVIS98c22nBtEMII3kQW0PQVT9NQY7OAUfXWfrrTmEbCdOM/EblCpjZZveHc0YeAgJGon3M7IaNhuIomTDfD0Fna7HdfSG2EHw1oQDmnwxLNJVn4Vx7DgUJQnc1f4x8V3JbsTJUMJFND/vo7iZEUXLEqT5AgMBAAECggEACUn00pXwivUfCdUr1nzRgRFqLxS+DHKmjHqYIbnjug8F58v81PMGf9vgJ6MbjevRxWPTjxO/VMFJTrCuQsSfD8Qu7ftwrPjB4cOxd2WHcSeVJLaMvH5Q3wibdrbQArW0l3zTu6p+9AlEE7n2MK6EJuAkoiWW1QsNT5hl/L812ZVaAD7blJ8LL3PsXdAK5e/Sm+DBf1ZNcMl78JbKZRHC2VxJk+OIOT02egqNWG2Pcvf0mAjsM3emFRQkRjAp2RXEyeD8VxcvWdDJ3SBzEXv50rdkGoSxOacCQFv2fEXaTAyOBe6BDs5Dy6FaC7pAZkqKUqgP1fZmYfdsdKmoYi08wQKBgQD/4wpKFr6zLr3zEtbhx4C8mltS37buYM+L0Bw3ejJu4iN1eqVGyue4AsaAvXXsOhWN97XXOJFN6Yj83cFfeq1MtnvkMUpDaf2SdSifOmSKyX6xcTTgmQZBZuowkmRMRTsC6fQd7EQkpIM/ZoHCynS8JpUrWCAi/6gWH/qPK9hQoQKBgQDNqxVkPNbepcKmz1lQsPGvqWqRKezw53LrjVmT6UpMCpaNbifAfUUEzaU5X43f6iJFqViF7EYtK9M4rPZpg0lD8J63A//iUhzdCHg2CbkESqDkeQ09IkffP80eR0nNt8tQdMZfayxsHNdNFaCnorfYrqEuBFW4aFwTiseQfYB9WQKBgQCEJYcpzec79/amsmMAhJwqSnjBKsF5B8wHQzlfOR8Ufnqbb/QsxBq4v84trCpbDYAWKgfhltgLaYCSPh9gJKWcyVzf8siMWg9W9GQ/HtPPjNF9553MI5rEadalsORVMyePkKy+S0bBuagCNPjsVMvGYxKEKOWnzWnLy0YFbDoxIQKBgCx1ekdT24L/xCc5FW6bAXPepJnCvWSKM851nNKbkKMFeuwRzugObFgQeFIBtPKdc1EpvWgd3kGvgpZy1UWTyse0AStA4xSyeWjShuHvkh46X7Nj85eujGjXKukLsgmVXI8E30kLKuwoA+a28SarxyBBB7ih2UHm1VioHGHAr4DpAoGBAJ63VY4gGsOF3MYc4qGsWCRF8YFC0dzD8nnvKlSDa8e8Hp8/hClSxhmEd3VbC5Zv2GBqJpt+MkRGS22xo28ZnTW43UpZUDTGDRtum+4QioMWGgXClLrvzJqBWxPa9HYDlVOMQipBMFknJ+trriKfHYlJdkYqwhc/Ef8SGeJpBNNP", "plm"))
-		if (isLogged && props.votingSession && props.votingSession.votingSessionStatus === "IN_PROGRESS") {
-			try {
-				const gasLimit = await electionSmartContract.methods.addVote("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsuWKw72VdTutimMz25mI4LuEjkRjU26GCofYlrIKFDaEhC4Cl+DpbivQHDpr1GwWqMN+Pp4aHcEz73JgHzD0lB2tpGig2XcX/tzH5pOPtOFf0BZQjuZCTGmrMQeD9iJJJIcu0E20cWG96aYHFNDLZ6/PbTI8z72DWHizL43l9nkEL2bF68+wB2rhQM3KZYjH/OFphZ9I1wtymluMnWE0qzKuI+cAt/82xq8TPnNz9sMTaEWaOB/2nahqXY6yau+X4LqgCNSvrgvDAo7g+lpJBpnHtKJ7+jsi3Dy6mIHt1dC/ArjE+yxJ1jU4T6dTSgPIh+TSSG51R2rOakXNDKUQ8wIDAQAB", "plm", "plm").estimateGas({ from: account });
+	const {data, isLoading, isError, refetch} = useQuery(["getUserDetailsForVoting"], () => {
+		const token = `Bearer ${localStorage.getItem("jwt_token")}`
+		if (localStorage.getItem("jwt_token") !== null) {
+		  return Axios
+			.get(
+				"http://localhost:8080/voters/logged-user",
+				{ headers: {
+					"Authorization" : token
+				}}
+			)
+			.then((response) => setUserInfo(response.data))
+			.catch((error) => {
+			  console.log(error)
+			  if (error.response.status === 403) {
+				alert("Session has expired. Please log in again!");
+				navigate("/signin");
+			  }
+		  })
+		}
+		return null
+	})
 
-				const response = await electionSmartContract.methods.addVote("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsuWKw72VdTutimMz25mI4LuEjkRjU26GCofYlrIKFDaEhC4Cl+DpbivQHDpr1GwWqMN+Pp4aHcEz73JgHzD0lB2tpGig2XcX/tzH5pOPtOFf0BZQjuZCTGmrMQeD9iJJJIcu0E20cWG96aYHFNDLZ6/PbTI8z72DWHizL43l9nkEL2bF68+wB2rhQM3KZYjH/OFphZ9I1wtymluMnWE0qzKuI+cAt/82xq8TPnNz9sMTaEWaOB/2nahqXY6yau+X4LqgCNSvrgvDAo7g+lpJBpnHtKJ7+jsi3Dy6mIHt1dC/ArjE+yxJ1jU4T6dTSgPIh+TSSG51R2rOakXNDKUQ8wIDAQAB", "plm", "plm").send({
+	const castVote = async (userChoice) => {
+		if (isLogged && props.votingSession && props.votingSession.votingSessionStatus === "IN_PROGRESS") {
+			const encryptedVote = encryptVote(userChoice);
+			const signature = signVote(userInfo.publicKey, userInfo.privateKey, encryptedVote);
+			try {
+				const gasLimit = await electionSmartContract.methods.addVote(userInfo.publicKey, encryptedVote, signature).estimateGas({ from: account });
+
+				const response = await electionSmartContract.methods.addVote(userInfo.publicKey, encryptedVote, signature).send({
 					from: account,
 					gas: gasLimit
 				});
@@ -167,6 +191,8 @@ export default function CastAVoteContent(props) {
 				const reason = reasonMatch ? reasonMatch[1] : "Unknown reason";
 				alert("You are not allowed to vote. Reason: " + reason);
 			}
+		} else {
+			alert("You are not allowed to vote.")
 		}
 	}
 
@@ -182,15 +208,18 @@ export default function CastAVoteContent(props) {
 		const stringToBeHashed = userPublicKey + encryptedVote;
 		const sign = new JSEncrypt();
 		const privateKey = '-----BEGIN RSA PRIVATE KEY-----\n' + userPrivateKey + '\n-----END RSA PRIVATE KEY-----\n';
-		
+
 		sign.setPrivateKey(privateKey);
-		return sign.sign(stringToBeHashed, CryptoJS.SHA256, 'sha-256')
+
+		const signature = sign.sign(stringToBeHashed, CryptoJS.SHA256, 'sha-256')
+
+		return signature
 	}
 
 	if (isLogged && props.votingSession && props.votingSession.votingSessionStatus === "IN_PROGRESS") {
-  	return votingAvailableContent(candidateList, castVote)
+  		return votingAvailableContent(candidateList, castVote)
 	} else {
-		// return voteUnavailableContent(isLogged)
-		return votingAvailableContent(candidateList, castVote)
+		return voteUnavailableContent(isLogged)
+		// return votingAvailableContent(candidateList, castVote)
 	}
 }
