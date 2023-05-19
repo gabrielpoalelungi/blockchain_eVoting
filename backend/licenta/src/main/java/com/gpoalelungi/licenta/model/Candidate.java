@@ -42,9 +42,6 @@ public class Candidate {
   @Column(name = "description", nullable = false)
   private String description;
 
-  @Column(name = "photo_url", nullable = false)
-  private String photoUrl;
-
   @Column(name = "created_at", nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
   @CreationTimestamp

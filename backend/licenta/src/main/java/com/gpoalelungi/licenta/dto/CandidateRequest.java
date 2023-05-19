@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class CandidateRequest {
   private String officialName;
   private String description;
-  private String photoUrl;
 }

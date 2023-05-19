@@ -51,7 +51,7 @@ export default function Navigator(props) {
         { id: 1, name: 'Who are the candidates?', icon: <PermContactCalendarRoundedIcon />, navigateTo: "/whoarethecandidates" },
         { id: 2, name: 'How to vote?', icon: <QuestionMarkIcon />, navigateTo: "/howtovote"},
         { id: 3, name: 'Cast a vote', icon: <HowToVoteRoundedIcon />, navigateTo: "/vote"},
-        { id: 4, name: 'Results', icon: <BarChartRoundedIcon />}
+        { id: 4, name: 'Results', icon: <BarChartRoundedIcon />, navigateTo: "/results"}
       ,]
     }
   ])

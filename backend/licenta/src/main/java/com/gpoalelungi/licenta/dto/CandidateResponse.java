@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 public class CandidateResponse {
   private String officialName;
   private String description;
-  private String photoUrl;
   private Long numberOfVotes;
 }

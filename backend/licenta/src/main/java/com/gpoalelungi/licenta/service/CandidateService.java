@@ -63,7 +63,6 @@ public class CandidateService {
 
     candidateToBeUpdated.setOfficialName(candidateRequest.getOfficialName());
     candidateToBeUpdated.setDescription(candidateRequest.getDescription());
-    candidateToBeUpdated.setPhotoUrl(candidateRequest.getPhotoUrl());
 
     return candidateRepository.save(candidateToBeUpdated);
   }

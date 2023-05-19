@@ -84,10 +84,9 @@ export default function SignIn() {
               id="email"
               label="Email Address"
               name="email"
-              autoFocus
-              
               error={errors.email?.message}
               helperText={errors.email?.message}
+              autoFocus        
               {...register("email")}
             />
             <TextField

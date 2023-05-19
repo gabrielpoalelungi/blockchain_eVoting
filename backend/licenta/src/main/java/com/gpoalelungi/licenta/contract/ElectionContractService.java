@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class ElectionContractService {
 
   private final Web3j web3j = Web3j.build(new HttpService("http://localhost:7545"));
-  private static final String CONTRACT_ADDRESS = "0x4c0C1Cbde15f0f8ecf61c21b3c6f4aAC1C384762";
+  private static final String CONTRACT_ADDRESS = "0xF015a1732f42E71788fBCBF3845Eff62f7E18393";
   private static final String ADMIN_ADDRESS = "0x17987d50dD4439Ed4Cf3975Ef6752D1C7a076cA3"; // replace with your actual admin address
   private static final BigInteger GAS_LIMIT = BigInteger.valueOf(3000000);
   private static final BigInteger GAS_PRICE = BigInteger.valueOf(1000000000); // 1 Gwei

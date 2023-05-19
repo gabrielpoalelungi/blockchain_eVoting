@@ -17,46 +17,76 @@ import { useNavigate } from "react-router-dom";
 import Election from './Election.json';
 import { JSEncrypt } from "jsencrypt";
 import CryptoJS from 'crypto-js';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
 
 const theme = createTheme();
 
-const votingAvailableContent = (candidateList, castVote) => {
+const votingAvailableContent = (candidateList, castVote, modalOpen, modalContent, handleModalClose) => {
 	return (
 		<ThemeProvider theme={theme}>
-					<CssBaseline />
-					<Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center" fontSize={"200%"}>
-						Vote your favourite candidate!
-					</Typography>
-					<Typography sx={{ my: 5, mx: 2 }} color="red" align="center" fontSize={"150%"}>
-						Kindly take note that once you have cast your vote, it is irrevocable and cannot be cancelled or changed. We kindly suggest that you carefully consider your decision before submitting your vote to ensure that it accurately reflects your choice.
-					</Typography>
-					<main>
-						<Container sx={{ py: 10 }} maxWidth="md">
-							<Grid container spacing={4}>
-									{candidateList.map((candidate) => (
-										<Grid item key={candidate.officialName} xs={12} sm={6} md={4}>
-											<Card
-											sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-											>
-											<CardMedia
-													component="img"
-													image="https://xsgames.co/randomusers/avatar.php?g=male"
-													alt="random"
-											/>
-											<CardContent sx={{ flexGrow: 1 }}>
-												<Typography gutterBottom variant="h5" component="h2">
-													{candidate.officialName}
-												</Typography>
-											</CardContent>
-											<CardActions>
-												<Button size="small" variant="contained" color="success" onClick={() => castVote(candidate.officialName)}>Vote</Button>
-											</CardActions>
-											</Card>
-										</Grid>
-									))}
-							</Grid>
-						</Container>
-					</main>
+			<CssBaseline />
+			<Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center" fontSize={"200%"}>
+				Vote your favourite candidate!
+			</Typography>
+			<Typography sx={{ my: 5, mx: 2 }} color="red" align="center" fontSize={"150%"}>
+				Kindly take note that once you have cast your vote, it is irrevocable and cannot be cancelled or changed. We kindly suggest that you carefully consider your decision before submitting your vote to ensure that it accurately reflects your choice.
+			</Typography>
+			<main>
+				<Container sx={{ py: 10 }} maxWidth="md">
+					<Grid container spacing={4}>
+							{candidateList.map((candidate) => (
+								<Grid item key={candidate.officialName} xs={12} sm={6} md={4}>
+									<Card
+									sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+									>
+									<CardMedia
+											component="img"
+											image="https://xsgames.co/randomusers/avatar.php?g=male"
+											alt="random"
+									/>
+									<CardContent sx={{ flexGrow: 1 }}>
+										<Typography gutterBottom variant="h5" component="h2">
+											{candidate.officialName}
+										</Typography>
+									</CardContent>
+									<CardActions>
+										<Button size="small" variant="contained" color="success" onClick={() => castVote(candidate.officialName)}>Vote</Button>
+									</CardActions>
+									</Card>
+								</Grid>
+							))}
+					</Grid>
+				</Container>
+			</main>
+			<Modal
+				open={modalOpen}
+				onClose={handleModalClose}
+				closeAfterTransition
+				aria-labelledby="parent-modal-title"
+  				aria-describedby="parent-modal-description"
+				>
+				<Box sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					width: '100%',
+					height: '100%',
+					}}>
+					<Card>
+						<CardContent>
+						<Typography variant="h6" gutterBottom align="center">
+							{modalContent}
+						</Typography>
+						</CardContent>
+						<CardActions sx={{ justifyContent: 'center' }}>
+						<Button onClick={handleModalClose} variant="contained" color="primary">
+							Close
+						</Button>
+						</CardActions>
+					</Card>
+				</Box>
+			</Modal>
 		</ThemeProvider>
 	)
 }
@@ -81,18 +111,23 @@ const voteUnavailableContent = (isLogged) => {
 			</ThemeProvider>
 		)
 	}
-	
 }
 
 export default function CastAVoteContent(props) {
 	const [candidateList, setCandidateList] = React.useState([])
 	const [electionSmartContract, setElectionSmartContract] = React.useState(null);
-	const [loading, setLoading] = useState(true);
 	const [account, setAccount] = useState('');
 	const [userInfo, setUserInfo] = React.useState();
+	const [modalOpen, setModalOpen] = useState(false);
+	const [modalContent, setModalContent] = useState("");
 
 	let isLogged = useSelector((state) => state.user.value.isLogged);
 	const navigate = useNavigate();
+
+	const handleModalClose = () => {
+		setModalOpen(false);
+		setModalContent("");
+	  };
 
 	useEffect(() => {
 		const loadBlockchainData = async () => {
@@ -106,8 +141,6 @@ export default function CastAVoteContent(props) {
 		if(networkData) {
 			const election = new web3.eth.Contract(Election.abi, networkData.address);
 			setElectionSmartContract(election);
-
-			setLoading(false);
 		} else {
 			window.alert('Election contract not deployed to detected network.');
 		}
@@ -185,14 +218,14 @@ export default function CastAVoteContent(props) {
 					gas: gasLimit
 				});
 
-				alert("Vote casted");
+				setModalOpen(true);
+				setModalContent("Vote casted");
 			} catch (error) {
 				const reasonMatch = error.message.match(/"reason": "(.*)",/);
 				const reason = reasonMatch ? reasonMatch[1] : "Unknown reason";
-				alert("You are not allowed to vote. Reason: " + reason);
+				setModalOpen(true);
+				setModalContent(reason + " or you already voted!");
 			}
-		} else {
-			alert("You are not allowed to vote.")
 		}
 	}
 
@@ -217,9 +250,8 @@ export default function CastAVoteContent(props) {
 	}
 
 	if (isLogged && props.votingSession && props.votingSession.votingSessionStatus === "IN_PROGRESS") {
-  		return votingAvailableContent(candidateList, castVote)
+  		return votingAvailableContent(candidateList, castVote, modalOpen, modalContent, handleModalClose)
 	} else {
 		return voteUnavailableContent(isLogged)
-		// return votingAvailableContent(candidateList, castVote)
 	}
 }

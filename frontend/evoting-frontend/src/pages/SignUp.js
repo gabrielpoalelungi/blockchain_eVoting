@@ -22,8 +22,6 @@ export default function SignUp() {
   const navigate = useNavigate();
 
   const schemaValidation = yup.object().shape({
-      firstName: yup.string().required("*first name required"),
-      lastName: yup.string().required("*last name required"),
       email: yup.string().email("*Invalid email").required("*email required"),
       phoneNumber: yup.string().required("*phone number required")
         .matches(/^(07)[2-9]{1}[0-9]{7}$/, "Phone number must be in the format 07XXXXXXXX"),
@@ -72,32 +70,6 @@ export default function SignUp() {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit(doRegister)} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                  error={errors.firstName?.message}
-                  helperText={errors.firstName?.message}
-                  {...register("firstName")}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  error={errors.lastName?.message}
-                  helperText={errors.lastName?.message}
-                  {...register("lastName")}
-                />
-              </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
