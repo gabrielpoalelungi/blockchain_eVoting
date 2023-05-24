@@ -84,6 +84,10 @@ public class CandidateService {
       throw new VotingSessionNotFinishedException("Cannot count votes. Voting session NOT FINISHED yet.");
     }
 
+    if (votingSession.getReleasePrivateKey() == null) {
+      throw new VotingSessionNotFinishedException("Cannot count votes. Voting session's private key NOT RELEASED yet'.");
+    }
+
     List<Candidate> candidates = getAllCandidates();
     List<Election.Vote> votes = votingSessionService.getAllVotes();
     for (Election.Vote vote : votes) {

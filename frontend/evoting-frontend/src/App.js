@@ -12,6 +12,13 @@ import * as React from 'react';
 import WhoAreTheCandidatesPage from './pages/WhoAreTheCandidatesPage';
 import CastAVotePage from './pages/CastAVotePage';
 import ResultsPage from './pages/ResultsPage';
+import AdminBasePage from './pages/AdminBasePage'
+import AdminAddCandidatePage from './pages/AdminAddCandidatePage'
+import AdminEditCandidatePage from './pages/AdminEditCandidatePage';
+import AdminCreateVoteSessionPage from './pages/AdminCreateVoteSessionPage';
+import AdminEditVoteSessionPage from './pages/AdminEditVoteSessionPage';
+import AdminStartEndVoteSessionPage from './pages/AdminStartEndVoteSessionPage';
+
 
 function App() {
   const client = new QueryClient({defaultOptions :{
@@ -42,6 +49,12 @@ function App() {
               <Route path="/whoarethecandidates" element={<WhoAreTheCandidatesPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
               <Route path="/vote" element={<CastAVotePage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
               <Route path="/results" element={<ResultsPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/admin" element={<AdminBasePage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/admin/addcandidate" element={<AdminAddCandidatePage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/admin/editcandidates" element={<AdminEditCandidatePage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/admin/createvotesession" element={<AdminCreateVoteSessionPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/admin/editvotesession" element={<AdminEditVoteSessionPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/admin/startendvotesession" element={<AdminStartEndVoteSessionPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
             </Routes>
           </BrowserRouter>
         </Provider>

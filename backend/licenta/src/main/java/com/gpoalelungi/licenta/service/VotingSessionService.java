@@ -131,6 +131,7 @@ public class VotingSessionService {
     try {
       String message = electionContractService.endVote();
       updateVotingSessionStatus(VotingSessionStatus.FINISHED);
+      releaseVotingSessionPrivateKey();
       return message;
     } catch (Exception e) {
       log.error("Error while finishing vote: {}", e.getMessage());
