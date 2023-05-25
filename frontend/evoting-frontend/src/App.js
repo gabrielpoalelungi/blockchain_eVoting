@@ -18,6 +18,7 @@ import AdminEditCandidatePage from './pages/AdminEditCandidatePage';
 import AdminCreateVoteSessionPage from './pages/AdminCreateVoteSessionPage';
 import AdminEditVoteSessionPage from './pages/AdminEditVoteSessionPage';
 import AdminStartEndVoteSessionPage from './pages/AdminStartEndVoteSessionPage';
+import AdminEditCandidateFormPage from './pages/AdminEditCandidateFormPage';
 
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
               <Route path="/admin/createvotesession" element={<AdminCreateVoteSessionPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
               <Route path="/admin/editvotesession" element={<AdminEditVoteSessionPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
               <Route path="/admin/startendvotesession" element={<AdminStartEndVoteSessionPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/admin/editcandidateform/:candidateId" element={<AdminEditCandidateFormPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
             </Routes>
           </BrowserRouter>
         </Provider>

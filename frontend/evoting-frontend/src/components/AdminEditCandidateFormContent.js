@@ -13,42 +13,41 @@ import Axios from "axios";
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers/yup";
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import { useNavigate } from "react-router-dom";
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import { useParams } from 'react-router-dom';
 
-export default function AdminCreateVoteSessionContent() {
+export default function AdminEditCandidateFormContent() {
   const navigate = useNavigate();
+  const {candidateId} = useParams();
 
   const schemaValidation = yup.object().shape({
-    startingAt: yup.string().required("*starting date required"),
-    endingAt: yup.string().required("*ending date required"),
+    officialName: yup.string().required("*official name required"),
+    description: yup.string().min(50).required("*description required"),
   })
 
   const {register, handleSubmit, formState: {errors}} = useForm({
     resolver: yupResolver(schemaValidation)
   });
 
-  const doCreateVoteSession = (data) => {
+  const doUpdateCandidate = (data) => {
     const token = `Bearer ${localStorage.getItem("jwt_token")}`
     if (localStorage.getItem("jwt_token") !== null) {
       return Axios
-        .post(
-            "http://localhost:8080/voting-session/create", data,
+        .put(
+            `http://localhost:8080/candidates/${candidateId}`, data,
             { headers: {
                 "Authorization" : token
             }}
         )
         .then((response) => {
-          alert("Voting session created successfully!");
+          alert("Candidate updated successfully!");
           navigate("/admin")
         })
         .catch((error) => {
           if (error.response.status === 403) {
             alert("Session has expired. Please log in again!");
             navigate("/signin");
-          } else {
-            alert("Error " + error.response.status + ": " + error.response.data);
-            navigate("/admin")
           }
       })
     }
@@ -67,42 +66,39 @@ export default function AdminCreateVoteSessionContent() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <HowToVoteIcon />
+            <HowToRegIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Create Voting Session
+            Update Candidate
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit(doCreateVoteSession)} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit(doUpdateCandidate)} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  id="startingAt"
-                  label="Starting At"
-                  name="startingAt"
-                  type="datetime-local"
-                  InputLabelProps={{shrink: true}}
+                  id="officialName"
+                  label="Official Name"
+                  name="officialName"
 
-                  error={errors.startingAt?.message}
-                  helperText={errors.startingAt?.message}
-                  {...register("startingAt")}
+                  error={errors.officialName?.message}
+                  helperText={errors.officialName?.message}
+                  {...register("officialName")}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
-                  id="endingAt"
-                  label="Ending At"
-                  name="endingAt"
-                  type="datetime-local"
-                  InputLabelProps={{shrink: true}}
+                id="description"
+                label="Description"
+                multiline
+                rows={4}
 
-                  error={errors.endingAt?.message}
-                  helperText={errors.endingAt?.message}
-                  {...register("endingAt")}
-                />
+                error={errors.description?.message}
+                helperText={errors.description?.message}
+                {...register("description")}
+
+                sx={{width: '100%'}}
+              />
               </Grid>
             </Grid>
             <Button
@@ -111,7 +107,7 @@ export default function AdminCreateVoteSessionContent() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Create Vote Session
+              Update candidate
             </Button>
           </Box>
         </Box>

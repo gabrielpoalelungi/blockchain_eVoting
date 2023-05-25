@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CandidateResponse {
+  private Long id;
   private String officialName;
   private String description;
   private Long numberOfVotes;

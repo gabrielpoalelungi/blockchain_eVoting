@@ -22,6 +22,12 @@ import Box from '@mui/material/Box';
 
 const theme = createTheme();
 
+const getRandomImage = () => {
+    // Generate a random number between 1 and 1000
+    const randomId = Math.floor(Math.random() * 75) + 1;
+    return `https://xsgames.co/randomusers/assets/avatars/male/${randomId}.jpg`;
+};
+
 const votingAvailableContent = (candidateList, castVote, modalOpen, modalContent, handleModalClose) => {
 	return (
 		<ThemeProvider theme={theme}>
@@ -42,8 +48,8 @@ const votingAvailableContent = (candidateList, castVote, modalOpen, modalContent
 									>
 									<CardMedia
 											component="img"
-											image="https://xsgames.co/randomusers/avatar.php?g=male"
-											alt="random"
+											image={getRandomImage()}
+											alt={candidate.officialName}
 									/>
 									<CardContent sx={{ flexGrow: 1 }}>
 										<Typography gutterBottom variant="h5" component="h2">

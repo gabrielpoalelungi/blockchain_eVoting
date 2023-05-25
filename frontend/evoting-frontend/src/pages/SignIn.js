@@ -19,7 +19,6 @@ import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 
-
 const theme = createTheme();
 
 export default function SignIn() {
@@ -49,8 +48,11 @@ export default function SignIn() {
                 isLogged: true,
                 role: jwt(token).role
             }))
-
-            navigate("/");
+            if (jwt(token).role === 'ADMIN') {
+              navigate("/admin")
+            } else {
+              navigate("/");
+            }
             alert("Logged in successfully!");
         })
         .catch((error) => {

@@ -35,6 +35,7 @@ const itemCategory = {
 export default function AdminNavigator(props) {
   const { ...other } = props;
   let isLogged = useSelector((state) => state.user.value.isLogged);
+  let role = useSelector((state) => state.user.value.role);
   const navigate = useNavigate();
   const [categories, setCategories] = React.useState([
     {
@@ -94,6 +95,11 @@ export default function AdminNavigator(props) {
   const resetItemsActive = () => {
     const newItemsActive = [false, false, false, false, false];
     props.setItemsActive(newItemsActive);
+  }
+
+  if (role !== 'ADMIN') {
+    navigate("/")
+    return;
   }
 
   return (
