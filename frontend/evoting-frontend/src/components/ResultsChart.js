@@ -81,7 +81,7 @@ export default function ResultsChart(props) {
 		if (localStorage.getItem("jwt_token") !== null) {
 			return Axios
 				.get(
-						"http://localhost:8080/candidates",
+						"http://localhost:8080/voting-session/results",
 						{ headers: {
 								"Authorization" : token
 						}}

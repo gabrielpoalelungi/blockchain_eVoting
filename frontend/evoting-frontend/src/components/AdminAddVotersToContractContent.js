@@ -9,54 +9,28 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import PeopleIcon from '@mui/icons-material/People';
 
-export default function AdminStartEndVoteSessionContent() {
+export default function AdminAddVotersToContractContent() {
   const navigate = useNavigate();
 
-  const startVote = () => {
+  const addVotersToContract = () => {
     const token = `Bearer ${localStorage.getItem("jwt_token")}`
     if (localStorage.getItem("jwt_token") !== null) {
       return Axios
         .post(
-            "http://localhost:8080/voting-session/start-vote", null,
+            "http://localhost:8080/voting-session/add-all-voters", null,
             { headers: {
                 "Authorization" : token
             }}
         )
         .then((response) => {
-          alert("Voting session started successfully!");
+          alert("Voters added successfully!");
           navigate("/admin")
         })
         .catch((error) => {
           if (error.response.status === 403) {
             console.log(error)
-            alert("Session has expired. Please log in again!");
-            navigate("/signin");
-          } else {
-            alert("Error " + error.response.status + ": " + error.response.data);
-            navigate("/admin")
-          }
-      })
-    }
-  }
-
-  const endVote = () => {
-    const token = `Bearer ${localStorage.getItem("jwt_token")}`
-    if (localStorage.getItem("jwt_token") !== null) {
-      return Axios
-        .post(
-            "http://localhost:8080/voting-session/end-vote", null,
-            { headers: {
-                "Authorization" : token
-            }}
-        )
-        .then((response) => {
-          alert("Voting session ended successfully!");
-          navigate("/admin")
-        })
-        .catch((error) => {
-          if (error.response.status === 403) {
             alert("Session has expired. Please log in again!");
             navigate("/signin");
           } else {
@@ -80,10 +54,10 @@ export default function AdminStartEndVoteSessionContent() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <PowerSettingsNewIcon />
+            <PeopleIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Start or End the vote session
+            Add Voters to Contract
           </Typography>
           <Box sx={{ mt: 3 }}>
             <Button
@@ -91,18 +65,9 @@ export default function AdminStartEndVoteSessionContent() {
               variant="contained"
               color="success"
               sx={{ mt: 3, mb: 2 }}
-              onClick={startVote}
+              onClick={addVotersToContract}
             >
-              Start Vote Session
-            </Button>
-            <Button
-              fullWidth
-              color="error"
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              onClick={endVote}
-            >
-              End Vote Session
+              Add Voters to Contract
             </Button>
           </Box>
         </Box>

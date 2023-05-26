@@ -19,6 +19,7 @@ import AdminCreateVoteSessionPage from './pages/AdminCreateVoteSessionPage';
 import AdminEditVoteSessionPage from './pages/AdminEditVoteSessionPage';
 import AdminStartEndVoteSessionPage from './pages/AdminStartEndVoteSessionPage';
 import AdminEditCandidateFormPage from './pages/AdminEditCandidateFormPage';
+import AdminAddVotersToContractPage from './pages/AdminAddVotersToContractPage';
 
 
 function App() {
@@ -34,7 +35,7 @@ function App() {
     localStorage.removeItem("jwt_token");
   };
 
-  const[itemsActive, setItemsActive] = React.useState([false, false, false, false, false]);
+  const[itemsActive, setItemsActive] = React.useState([false, false, false, false, false, false]);
 
   return (
     <div className="App">
@@ -57,6 +58,7 @@ function App() {
               <Route path="/admin/editvotesession" element={<AdminEditVoteSessionPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
               <Route path="/admin/startendvotesession" element={<AdminStartEndVoteSessionPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
               <Route path="/admin/editcandidateform/:candidateId" element={<AdminEditCandidateFormPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
+              <Route path="/admin/addvoters" element={<AdminAddVotersToContractPage itemsActive={itemsActive} setItemsActive={setItemsActive}/>}/>
             </Routes>
           </BrowserRouter>
         </Provider>

@@ -11,6 +11,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import PeopleIcon from '@mui/icons-material/People';
 import Chip from '@mui/material/Chip';
 import { useQuery } from '@tanstack/react-query';
 import Axios from "axios";
@@ -50,7 +51,8 @@ export default function AdminNavigator(props) {
         { id: 1, name: 'Edit Candidates', icon: <EditIcon />, navigateTo: "/admin/editcandidates" },
         { id: 2, name: 'Create Voting Session', icon: <AddIcon />, navigateTo: "/admin/createvotesession" },
         { id: 3, name: 'Edit Voting Session', icon: <EditIcon />, navigateTo: "/admin/editvotesession"},
-        { id: 4, name: 'Start/End Voting Session', icon: <PowerSettingsNewIcon />, navigateTo: "/admin/startendvotesession"}
+        { id: 4, name: 'Add All Voters to Smart Contract', icon: <PeopleIcon />, navigateTo: "/admin/addvoters"},
+        { id: 5, name: 'Start/End Voting Session', icon: <PowerSettingsNewIcon />, navigateTo: "/admin/startendvotesession"}
       ,]
     }
   ])

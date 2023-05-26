@@ -50,7 +50,7 @@ public class VotingSessionService {
 
     PrivateKey privateKey = keyPair.getPrivate();
     byte[] privateKeyBytes = privateKey.getEncoded();
-    FileOutputStream fos = new FileOutputStream(String.format("privateKey-session%d.txt", votingSessionRepository.getCurrentVal()));
+    FileOutputStream fos = new FileOutputStream(String.format("privateKey-session%d.txt", votingSessionRepository.getCurrentVal() + 1));
     fos.write(privateKeyBytes);
     fos.close();
 
@@ -130,8 +130,8 @@ public class VotingSessionService {
 
     try {
       String message = electionContractService.endVote();
-      updateVotingSessionStatus(VotingSessionStatus.FINISHED);
       releaseVotingSessionPrivateKey();
+      updateVotingSessionStatus(VotingSessionStatus.FINISHED);
       return message;
     } catch (Exception e) {
       log.error("Error while finishing vote: {}", e.getMessage());
