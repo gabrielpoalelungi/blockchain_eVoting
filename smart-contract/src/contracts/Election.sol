@@ -64,8 +64,7 @@ contract Election {
 
     event VoteCasted (
         string publicKey,
-        string encryptedVote,
-        string signature
+        string message
     );
 
     event VoterAdded (
@@ -114,7 +113,7 @@ contract Election {
         voteCount++;
         votes[voteCount] = Vote(_publicKey, _encryptedVote, _signature);
         voters[hashedPublicKey].hasVoted = true;
-        emit VoteCasted(_publicKey, _encryptedVote, _signature);
+        emit VoteCasted(_publicKey, "Vote has been registered for the voter");
     }
 
     // Return all the votes casted in this session

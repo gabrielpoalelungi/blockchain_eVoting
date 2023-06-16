@@ -99,22 +99,4 @@ public class CandidateService {
       }
     }
   }
-
-  public Long countTotalVotes() {
-    VotingSession votingSession = votingSessionService.getVotingSession();
-
-    if (votingSession.getVotingSessionStatus() != VotingSessionStatus.FINISHED) {
-      throw new VotingSessionNotFinishedException("Cannot count votes. Voting session NOT FINISHED yet.");
-    }
-
-    List<Candidate> candidates = getAllCandidates();
-    Long totalVotes = 0L;
-
-    for(Candidate candidate : candidates) {
-      if (candidate.getNumberOfVotes() != null) {
-        totalVotes += candidate.getNumberOfVotes();
-      }
-    }
-    return totalVotes;
-  }
 }

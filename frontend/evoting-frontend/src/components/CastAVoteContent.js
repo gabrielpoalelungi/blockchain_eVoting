@@ -223,6 +223,7 @@ export default function CastAVoteContent(props) {
 					from: account,
 					gas: gasLimit
 				});
+				console.log("RESPONSE: ", response)
 
 				setModalOpen(true);
 				setModalContent("Vote casted");
