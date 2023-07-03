@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.5.0;
+pragma solidity 0.8.19;
 
 contract Election {
     // The vote struct that represents the valuable payload of a final vote
@@ -94,6 +94,7 @@ contract Election {
         voters[hashedPublicKey] = Voter(true, false);
         emit VoterAdded(hashedPublicKey, true, false);
     }
+    //lala
 
     // Get details of a voter, be him/her registered or not
     function getVoter(bytes32 hashedPublicKey) private view returns (Voter memory){
