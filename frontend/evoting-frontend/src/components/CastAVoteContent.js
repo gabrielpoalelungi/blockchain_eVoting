@@ -137,19 +137,19 @@ export default function CastAVoteContent(props) {
 
 	useEffect(() => {
 		const loadBlockchainData = async () => {
-		const web3 = window.web3;
-		const accounts = await web3.eth.getAccounts();
-		setAccount(accounts[0]);
+			const web3 = window.web3;
+			const accounts = await web3.eth.getAccounts();
+			setAccount(accounts[0]);
 
-		const networkId = await web3.eth.net.getId();
-		const networkData = Election.networks[networkId];
+			const networkId = await web3.eth.net.getId();
+			const networkData = Election.networks[networkId];
 
-		if(networkData) {
-			const election = new web3.eth.Contract(Election.abi, networkData.address);
-			setElectionSmartContract(election);
-		} else {
-			window.alert('Election contract not deployed to detected network.');
-		}
+			if(networkData) {
+				const election = new web3.eth.Contract(Election.abi, networkData.address);
+				setElectionSmartContract(election);
+			} else {
+				window.alert('Election contract not deployed to detected network.');
+			}
 		}
 
 		const loadWeb3 = async () => {
@@ -163,7 +163,7 @@ export default function CastAVoteContent(props) {
 			else {
 				window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
 			}
-			}
+		}
 
 			loadWeb3();
 			loadBlockchainData();
